@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/stat_notify_chat"
+        android:src="@android:drawable/stat_notify_chat"
+        android:id="@+id/button_message"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/sym_action_call"
+        android:src="@android:drawable/sym_action_call"
+        android:id="@+id/button_call"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/button_message"
+        android:layout_toStartOf="@+id/button_message"
+        android:layout_marginRight="270dp"
+        android:layout_marginEnd="270dp" />
+
+    <TextView
+        android:text="MobileNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button_call"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:id="@+id/textview_phone_number" />
+</RelativeLayout>
