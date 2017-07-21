@@ -1,12 +1,8 @@
 package opencontacts.open.com.opencontacts.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.View;
-
-import opencontacts.open.com.opencontacts.Contact;
 
 /**
  * Created by sultanm on 7/17/17.

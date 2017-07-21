@@ -26,6 +26,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.googlecode.ez-vcard:ez-vcard:0.10.2'
-    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'com.github.satyan:sugar:1.5'
     testCompile 'junit:junit:4.12'
 }

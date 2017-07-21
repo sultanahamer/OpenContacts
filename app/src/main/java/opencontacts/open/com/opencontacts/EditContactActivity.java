@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.ContactsDBHelper.ContactsDBHelper;
 
 public class EditContactActivity extends AppCompatActivity {

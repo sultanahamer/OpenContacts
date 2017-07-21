@@ -1,8 +1,6 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.domain;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
+import com.orm.SugarRecord;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,18 +8,13 @@ import java.util.ArrayList;
 /**
  * Created by sultanm on 3/24/17.
  */
-@Table(name = "Contacts")
-public class Contact extends Model implements Serializable{
-    @Column(name = "FirstName")
+public class Contact extends SugarRecord implements Serializable{
     public String firstName;
 
-    @Column(name = "LastName")
     public String lastName;
 
-    @Column(name = "PhoneNumber")
     public String phoneNumber;
 
-    @Column(name = "ExtraNumbers")
     public ArrayList<String> extraNumbers;
 
     public Contact(){

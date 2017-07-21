@@ -2,7 +2,6 @@ package opencontacts.open.com.opencontacts;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 
+import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 import static opencontacts.open.com.opencontacts.ContactsListView.*;
