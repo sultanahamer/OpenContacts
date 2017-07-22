@@ -1,18 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_contact_details"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="opencontacts.open.com.opencontacts.ContactDetailsActivity">
+    android:layout_weight="15"
+    tools:context="opencontacts.open.com.opencontacts.ContactDetailsActivity"
+    android:orientation="vertical">
 
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:title="Edit Contact"
+        android:background="?attr/colorPrimary"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/toolbar"
+        android:layout_weight="0.30">
+        <ImageButton
+            android:background="@null"
+            android:layout_gravity="end"
+            android:onClick="exportToContactsApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_directions"
+            android:src="@android:drawable/ic_menu_directions"
+            android:id="@+id/image_button_stop_search"
+            android:layout_marginRight="16dp"
+            android:layout_weight="0.30" />
+        <ImageButton
+            android:background="@null"
+            android:layout_gravity="end"
+            android:onClick="editContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_edit"
+            android:src="@android:drawable/ic_menu_edit"
+            android:layout_marginRight="4dp"
+            android:id="@+id/imageButton"
+            />
+    </android.support.v7.widget.Toolbar>
     <ListView
         android:id="@+id/listview_contact_details"
+        android:layout_weight="13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></ListView>
-</RelativeLayout>
+</LinearLayout>

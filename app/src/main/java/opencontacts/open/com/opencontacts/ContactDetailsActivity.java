@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 public class ContactDetailsActivity extends Activity {
     private Contact contact;
     private long contactId;
+    private Toolbar toolbar;
 
     private View.OnClickListener callContact = new View.OnClickListener() {
         @Override
@@ -42,10 +44,11 @@ public class ContactDetailsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_details);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent intent = getIntent();
         contact = (Contact) intent.getSerializableExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
         contactId = intent.getLongExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
-        setTitle(contact.getName() );
+        toolbar.setTitle(contact.getName());
         if(contactId == -1){
             Toast.makeText(this, R.string.error_while_loading_contact, Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED);
