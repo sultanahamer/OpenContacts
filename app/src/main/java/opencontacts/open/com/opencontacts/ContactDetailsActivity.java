@@ -1,8 +1,10 @@
 package opencontacts.open.com.opencontacts;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
@@ -72,4 +75,18 @@ public class ContactDetailsActivity extends Activity {
         });
     }
 
+    public void exportToContactsApp(View view) {
+        Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+
+        ArrayList<ContentValues> data = new ArrayList<ContentValues>();
+        for(String phoneNumber : contact.getPhoneNumbers()){
+            ContentValues row = new ContentValues();
+            row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+            row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber);
+            data.add(row);
+        }
+        exportToContactsAppIntent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data)
+                .putExtra(ContactsContract.Intents.Insert.NAME, contact.getName());
+        startActivity(exportToContactsAppIntent);
+    }
 }
