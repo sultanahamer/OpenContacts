@@ -10,11 +10,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
@@ -50,6 +49,12 @@ public class ContactsListView extends ListView {
                 return convertView;
             }
         };
+        adapter.sort(new Comparator<Contact>() {
+            @Override
+            public int compare(Contact contact1, Contact contact2) {
+                return contact1.getName().compareToIgnoreCase(contact2.getName());
+            }
+        });
         this.setAdapter(adapter);
     }
 

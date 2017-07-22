@@ -1,11 +1,8 @@
 package opencontacts.open.com.opencontacts.utils;
 
-import android.util.LongSparseArray;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Function;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
