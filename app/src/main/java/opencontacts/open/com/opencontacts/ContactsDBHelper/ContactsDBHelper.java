@@ -14,6 +14,6 @@ public class ContactsDBHelper {
     }
 
     public static List<Contact> getAllContacts(){
-        return Contact.listAll(Contact.class);
+        return Contact.listAll(Contact.class, "first_Name");
     }
 }
