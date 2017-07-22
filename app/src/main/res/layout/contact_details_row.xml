@@ -12,17 +12,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/sym_action_call"
-        android:src="@android:drawable/sym_action_call"
-        android:id="@+id/button_call"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button_message"
-        android:layout_toStartOf="@+id/button_message"
-        android:layout_marginRight="270dp"
-        android:layout_marginEnd="270dp" />
 
     <TextView
         android:text="MobileNumber"
@@ -32,4 +21,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="12dp"
         android:id="@+id/textview_phone_number" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/sym_action_call"
+        android:src="@android:drawable/sym_action_call"
+        android:id="@+id/button_call"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
