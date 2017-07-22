@@ -30,6 +30,11 @@ public class Contact implements Serializable{
         this.name = firstName + " " + lastName;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public String getPhoneNumber(){
         return phoneNumbers.get(0);
     }

@@ -8,21 +8,14 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="16dp"
         app:srcCompat="@android:drawable/sym_action_call"
         android:src="@android:drawable/sym_action_call"
         android:id="@+id/button_call"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/button_message"
         android:layout_toStartOf="@+id/button_message" />
-
-    <TextView
-        android:text="phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textview_phone_number"
-        android:layout_below="@+id/button_call"
-        android:layout_alignLeft="@+id/textview_full_name"
-        android:layout_alignStart="@+id/textview_full_name" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,6 +29,8 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@null"
+        android:padding="16dp"
         app:srcCompat="@android:drawable/stat_notify_chat"
         android:src="@android:drawable/stat_notify_chat"
         android:id="@+id/button_message"
@@ -43,5 +38,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-
+    <TextView
+        android:text="phone_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textview_phone_number"
+        android:layout_alignBottom="@+id/button_message"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

@@ -30,6 +30,7 @@ public class ContactsListView extends ListView {
     public ContactsListView(final Context context, final OnClickListener callContact, final OnClickListener messageContact, final OnClickListener editContact) {
         super(context);
         this.context = context;
+        setTextFilterEnabled(true);
         List<Contact> contacts = DomainUtils.getAllContacts();
 
         adapter = new ArrayAdapter<Contact>(context, R.layout.contact, contacts){
