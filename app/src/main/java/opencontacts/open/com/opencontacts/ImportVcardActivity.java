@@ -18,7 +18,8 @@ import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.FormattedName;
 import ezvcard.property.Telephone;
-import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.orm.Contact;
+import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 
 public class ImportVcardActivity extends AppCompatActivity {
     private String TOTAL_NUMBER_OF_VCARDS = "total_vcards";
@@ -53,17 +54,10 @@ public class ImportVcardActivity extends AppCompatActivity {
                     Contact contact = new Contact();
                     contact.firstName = name.getValue();
                     contact.lastName = "";
-                    List<Telephone> telephoneNumbers = vcard.getTelephoneNumbers();
-                    if(telephoneNumbers.size() == 1)
-                        contact.phoneNumber = telephoneNumbers.get(0).getText();
-                    else if(telephoneNumbers.size() > 1){
-                        contact.phoneNumber = telephoneNumbers.get(0).getText();
-                        contact.extraNumbers = new ArrayList<String>();
-                        for(int i=1, total=telephoneNumbers.size(); i<total; i++){
-                            contact.extraNumbers.add(telephoneNumbers.get(i).getText());
-                        }
-                    }
                     contact.save();
+                    for(Telephone telephoneNumber : vcard.getTelephoneNumbers()){
+                        new PhoneNumber(telephoneNumber.getText(), contact).save();
+                    }
                     numberOfvCardsImported++;
                     publishProgress(NUMBER_OF_VCARDS_IMPORTED_UNTIL_NOW, numberOfvCardsImported);
                 }

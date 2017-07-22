@@ -10,10 +10,12 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
-import opencontacts.open.com.opencontacts.ContactsDBHelper.ContactsDBHelper;
+import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
+import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
  * Created by sultanm on 3/25/17.
@@ -29,17 +31,18 @@ public class ContactsListView extends ListView {
     public ContactsListView(final Context context, final OnClickListener callContact, final OnClickListener messageContact, final OnClickListener editContact) {
         super(context);
         this.context = context;
-        this.contacts = ContactsDBHelper.getAllContacts();
-        adapter = new ArrayAdapter<Contact>(context, R.layout.contact, this.contacts){
+        List<Contact> contacts = DomainUtils.getAllContacts();
+
+        adapter = new ArrayAdapter<Contact>(context, R.layout.contact, contacts){
             private LayoutInflater layoutInflater = LayoutInflater.from(context);
             @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                Contact contact = contacts.get(position);
+                Contact contact = getItem(position);
                 if(convertView == null)
                     convertView = layoutInflater.inflate(R.layout.contact, parent, false);
-                ((TextView) convertView.findViewById(R.id.textview_full_name)).setText(contact.firstName + " " + contact.lastName);
-                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(contact.phoneNumber);
+                ((TextView) convertView.findViewById(R.id.textview_full_name)).setText(contact.getName());
+                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(contact.getPhoneNumber());
                 ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
                 ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 convertView.setTag(position);
@@ -56,13 +59,13 @@ public class ContactsListView extends ListView {
             throw new Exception("Invalid contact position to be updated");
         else{
             adapter.remove(adapter.getItem(position));
-            adapter.insert(ContactsDBHelper.getContactWithId(contactId), position);
+            adapter.insert(DomainUtils.getContact(contactId), position);
         }
         adapter.notifyDataSetChanged();
     }
 
     public void addNewContactInView(long newContactId) {
-        adapter.add(ContactsDBHelper.getContactWithId(newContactId));
+        adapter.add(DomainUtils.getContact(newContactId));
         adapter.notifyDataSetChanged();
     }
 

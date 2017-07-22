@@ -1,9 +1,8 @@
 package opencontacts.open.com.opencontacts;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -13,7 +12,7 @@ import java.io.Serializable;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
-import static opencontacts.open.com.opencontacts.ContactsListView.*;
+import static opencontacts.open.com.opencontacts.ContactsListView.OnClickListener;
 
 
 public class MainActivity extends Activity {
@@ -25,14 +24,14 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View v) {
             Contact contact = contactsListView.getContactAt((Integer) ((View)v.getParent()).getTag());
-            AndroidUtils.call(contact.phoneNumber, getApplicationContext());
+            AndroidUtils.call(contact.getPhoneNumber(), getApplicationContext());
         }
     };
     private OnClickListener messageContact = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Contact contact = contactsListView.getContactAt((Integer) ((View)v.getParent()).getTag());
-            AndroidUtils.message(contact.phoneNumber, getApplicationContext());
+            AndroidUtils.message(contact.getPhoneNumber(), getApplicationContext());
         }
     };
     OnClickListener editContact = new OnClickListener() {
@@ -79,7 +78,7 @@ public class MainActivity extends Activity {
     }
 
     public void editContact(Contact selectedContact){
-        Intent editContact = new Intent((Context) getApplication(), ContactDetailsActivity.class);
+        Intent editContact = new Intent(getApplication(), ContactDetailsActivity.class);
         editContact.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, (Serializable) selectedContact);
         editContact.putExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId());
         startActivity(editContact);

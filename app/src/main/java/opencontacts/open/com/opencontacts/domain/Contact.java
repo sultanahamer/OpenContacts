@@ -1,35 +1,66 @@
 package opencontacts.open.com.opencontacts.domain;
 
-import com.orm.SugarRecord;
-
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by sultanm on 3/24/17.
+ * Created by sultanm on 7/22/17.
  */
-public class Contact extends SugarRecord implements Serializable{
-    public String firstName;
 
-    public String lastName;
+public class Contact implements Serializable{
+    private final long id;
+    private String firstName;
+    private String lastName;
+    private List<String> phoneNumbers;
+    private String name;
 
-    public String phoneNumber;
-
-    public ArrayList<String> extraNumbers;
-
-    public Contact(){
-        super();
-    }
-
-    public Contact(String firstName, String lastName, String phoneNumber){
-        setAll(firstName, lastName, phoneNumber);
-    }
-    public void setAll(String firstName, String lastName, String mobileNumber){
+    public Contact(long id, String firstName, String lastName, List<String> phoneNumbers) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = mobileNumber;
+        this.phoneNumbers = phoneNumbers;
+        this.name = firstName + " " + lastName;
     }
-    public String toString(){
-        return firstName + " " + lastName + ":" + getId();
+
+    public Contact(String firstName, String lastName, List<String> phoneNumbers) {
+        this.id = -1;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumbers = phoneNumbers;
+        this.name = firstName + " " + lastName;
+    }
+
+    public String getPhoneNumber(){
+        return phoneNumbers.get(0);
+    }
+    public String getName(){
+        return name;
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<String> getPhoneNumbers() {
+        return phoneNumbers;
+    }
+
+    public void setPhoneNumbers(List<String> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
     }
 }
