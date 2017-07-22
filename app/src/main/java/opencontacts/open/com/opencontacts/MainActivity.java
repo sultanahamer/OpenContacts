@@ -100,7 +100,6 @@ public class MainActivity extends Activity implements TextWatcher {
     public void addContact(View view) {
         Intent addContact = new Intent(this, EditContactActivity.class);
         addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
-        addContact.putExtra("position", -1);
         startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
     }
 

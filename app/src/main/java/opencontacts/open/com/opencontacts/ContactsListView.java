@@ -50,13 +50,17 @@ public class ContactsListView extends ListView {
                 return convertView;
             }
         };
+        sortContacts();
+        this.setAdapter(adapter);
+    }
+
+    private void sortContacts() {
         adapter.sort(new Comparator<Contact>() {
             @Override
             public int compare(Contact contact1, Contact contact2) {
                 return contact1.getName().compareToIgnoreCase(contact2.getName());
             }
         });
-        this.setAdapter(adapter);
     }
 
     public void updateContactViewAt(int position, long contactId) throws Exception {
@@ -72,6 +76,7 @@ public class ContactsListView extends ListView {
 
     public void addNewContactInView(long newContactId) {
         adapter.add(DomainUtils.getContact(newContactId));
+        sortContacts();
         adapter.notifyDataSetChanged();
     }
 
