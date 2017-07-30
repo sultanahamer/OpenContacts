@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
@@ -27,11 +28,33 @@ public class ContactsListView extends ListView {
     Context context;
     ArrayAdapter<Contact> adapter;
 
-    public ContactsListView(final Context context, final OnClickListener callContact, final OnClickListener messageContact, final OnClickListener editContact) {
+    public ContactsListView(final Context context) {
         super(context);
         this.context = context;
         setTextFilterEnabled(true);
         List<Contact> contacts = DomainUtils.getAllContacts();
+
+        final OnClickListener callContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Contact contact = (Contact) ((View)v.getParent()).getTag();
+                AndroidUtils.call(contact.getPhoneNumber(), context);
+            }
+        };
+        final OnClickListener messageContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Contact contact = (Contact) ((View)v.getParent()).getTag();
+                AndroidUtils.message(contact.getPhoneNumber(), context);
+            }
+        };
+        final OnClickListener editContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Contact contact = (Contact) v.getTag();
+                AndroidUtils.editContact(contact, context);
+            }
+        };
 
         adapter = new ArrayAdapter<Contact>(context, R.layout.contact, contacts){
             private LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -45,7 +68,7 @@ public class ContactsListView extends ListView {
                 ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(contact.getPhoneNumber());
                 ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
                 ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
-                convertView.setTag(position);
+                convertView.setTag(contact);
                 convertView.setOnClickListener(editContact);
                 return convertView;
             }
@@ -78,10 +101,6 @@ public class ContactsListView extends ListView {
         adapter.add(DomainUtils.getContact(newContactId));
         sortContacts();
         adapter.notifyDataSetChanged();
-    }
-
-    public Contact getContactAt(int position){
-        return adapter.getItem(position);
     }
 
     public void deleteContactAt(int lastSelectedContactPosition) {

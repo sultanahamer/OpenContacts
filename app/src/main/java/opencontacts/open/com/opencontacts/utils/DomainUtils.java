@@ -44,7 +44,11 @@ public class DomainUtils {
         return new Contact(contact.getId(), contact.firstName, contact.lastName, phoneNumbers);
     }
     public static Contact getContact(long id){
+        if(id == -1)
+            return null;
         opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContactWithId(id);
+        if(contact == null)
+            return null;
         return createNewDomainContact(contact);
     }
 }

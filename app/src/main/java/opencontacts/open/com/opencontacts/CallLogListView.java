@@ -15,7 +15,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
+import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
  * Created by sultanm on 7/31/17.
@@ -26,11 +28,37 @@ public class CallLogListView extends ListView {
     CallLogListView thisClass = this;
     Context context;
     ArrayAdapter<CallLogEntry> adapter;
-    public CallLogListView(final Context context, final View.OnClickListener callContact, final View.OnClickListener messageContact, final View.OnClickListener editContact) {
+    public CallLogListView(final Context context) {
         super(context);
         this.context = context;
-        setTextFilterEnabled(true);
         callLogEntries = CallLogEntry.find(CallLogEntry.class, null, null, null, "date desc", "100");
+
+        final OnClickListener callContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
+                AndroidUtils.call(callLogEntry.getPhoneNumber(), context);
+            }
+        };
+        final OnClickListener messageContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
+                AndroidUtils.message(callLogEntry.getPhoneNumber(), context);
+            }
+        };
+        final OnClickListener editContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
+                long contactId = callLogEntry.getContactId();
+                if(contactId == -1)
+                    return;
+                AndroidUtils.editContact(DomainUtils.getContact(contactId), context);
+            }
+        };
+
+
         adapter = new ArrayAdapter<CallLogEntry>(context, R.layout.call_log_entry, callLogEntries){
             private LayoutInflater layoutInflater = LayoutInflater.from(context);
             @NonNull
@@ -50,7 +78,7 @@ public class CallLogListView extends ListView {
                 else if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.MISSED_TYPE)))
                     ((ImageView)convertView.findViewById(R.id.image_button_call_type)).setImageResource(android.R.drawable.sym_call_missed);
                 ((TextView)convertView.findViewById(R.id.duration_of_call)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
-                convertView.setTag(position);
+                convertView.setTag(callLogEntry);
                 convertView.setOnClickListener(editContact);
                 return convertView;
             }
