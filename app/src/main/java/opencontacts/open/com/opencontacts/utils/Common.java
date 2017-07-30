@@ -1,5 +1,6 @@
 package opencontacts.open.com.opencontacts.utils;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +31,11 @@ public class Common {
                 numericString.append(characterToIntegerMappingForKeyboardLayout.get(Character.toUpperCase(c)));
         }
         return numericString.toString();
+    }
+
+    public static String getDurationInMinsAndSecs(int duration){
+        NumberFormat twoDigitFormat = NumberFormat.getInstance();
+        twoDigitFormat.setMinimumIntegerDigits(2);
+        return twoDigitFormat.format(duration / 60) + ":" + twoDigitFormat.format(duration % 60);
     }
 }

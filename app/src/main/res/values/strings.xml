@@ -8,4 +8,6 @@
     <string name="error_while_parsing_vcard_file">Error occured while parsing vcard file</string>
     <string name="unexpected_error_happened">Unexpected error happened</string>
     <string name="title_activity_contact_details">ContactDetailsActivity</string>
+    <string name="grant_read_call_logs_permission">Please grant read call logs permission to this application</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
 </resources>

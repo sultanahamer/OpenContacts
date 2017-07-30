@@ -10,13 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-
-import java.util.List;
-
 import opencontacts.open.com.opencontacts.orm.Contact;
-import opencontacts.open.com.opencontacts.orm.PhoneNumber;
-
-import static android.content.Context.WINDOW_SERVICE;
+import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 /**
  * Created by sultanm on 7/30/17.
@@ -28,7 +23,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            Contact callingContact = getContact(incomingNumber);
+            Contact callingContact = ContactsDBHelper.getContact(incomingNumber);
             if(callingContact == null)
                 return;
             drawContactID(context, callingContact);
@@ -42,7 +37,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
     }
 
     private void drawContactID(Context context, Contact callingContact) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
         LayoutInflater layoutinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         drawOverIncomingCallLayout = layoutinflater.inflate(R.layout.draw_over_incoming_call, null);
         TextView contactName = (TextView) drawOverIncomingCallLayout.findViewById(R.id.name_of_contact);
@@ -61,17 +56,10 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         windowManager.addView(drawOverIncomingCallLayout, layoutParams);
     }
 
-    private Contact getContact(String incomingNumber) {
-        List<PhoneNumber> phoneNumbers = PhoneNumber.find(PhoneNumber.class, "phone_Number like ?", "%" + incomingNumber.substring(incomingNumber.length() - 10));
-        if(phoneNumbers.size() == 0)
-            return null;
-        return phoneNumbers.get(0).getContact();
-    }
-
     private void removeCallerIdDrawing(Context context) {
         if(drawOverIncomingCallLayout == null)
             return;
-        WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) context.getSystemService(context.WINDOW_SERVICE);
         windowManager.removeView(drawOverIncomingCallLayout);
         drawOverIncomingCallLayout = null;
     }

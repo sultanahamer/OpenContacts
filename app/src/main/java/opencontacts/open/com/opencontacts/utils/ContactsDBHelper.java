@@ -56,4 +56,12 @@ public class ContactsDBHelper {
         Contact.saveInTx(dbContacts);
         PhoneNumber.saveInTx(dbPhoneNumbers);
     }
+
+    public static Contact getContact(String incomingNumber) {
+        String phoneNumberToSearch = incomingNumber.length() > 10 ? incomingNumber.substring(incomingNumber.length() - 10) : incomingNumber;
+        List<PhoneNumber> phoneNumbers = PhoneNumber.find(PhoneNumber.class, "phone_Number like ?", "%" + phoneNumberToSearch);
+        if(phoneNumbers.size() == 0)
+            return null;
+        return phoneNumbers.get(0).getContact();
+    }
 }

@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="opencontacts.open.com.opencontacts">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+
     <application
         android:name="com.orm.SugarApp"
         android:allowBackup="true"
@@ -18,32 +23,44 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="DATABASE" android:value="contacts.db" />
-        <meta-data android:name="VERSION" android:value="1" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="opencontacts.open.com.opencontacts.orm" />
+
+        <meta-data
+            android:name="DATABASE"
+            android:value="contacts.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="opencontacts.open.com.opencontacts.orm" />
+
         <activity android:name=".EditContactActivity" />
         <activity
             android:name=".ContactDetailsActivity"
             android:label="@string/title_activity_contact_details" />
-        <activity android:name=".ImportVcardActivity"
-                android:label="@string/import_activity">
-                    <intent-filter >
-                        <action android:name="android.intent.action.VIEW" />
-                        <category android:name="android.intent.category.DEFAULT" />
-                        <category android:name="android.intent.category.BROWSABLE" />
-                        <data android:scheme="file" />
-                        <data android:mimeType="*/*" />
-                        <data android:pathPattern=".*\\.vcf" />
-                    </intent-filter>
+        <activity
+            android:name=".ImportVcardActivity"
+            android:label="@string/import_activity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.vcf" />
+            </intent-filter>
         </activity>
+
         <receiver android:name=".PhoneStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
 </manifest>
