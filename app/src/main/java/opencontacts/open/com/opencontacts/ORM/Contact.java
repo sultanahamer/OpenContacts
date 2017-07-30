@@ -23,7 +23,7 @@ public class Contact extends SugarRecord implements Serializable{
     }
 
     public String toString(){
-        return firstName + " " + lastName + ":" + getId();
+        return firstName + " " + lastName;
     }
 
     public List<PhoneNumber> getAllPhoneNumbers(){
