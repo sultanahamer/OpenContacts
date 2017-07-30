@@ -58,6 +58,19 @@ public class MainActivity extends Activity implements TextWatcher {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         searchBar = (EditText) findViewById(R.id.text_edit_search_box);
         stopSearch = (ImageButton) findViewById(R.id.image_button_stop_search);
+        stopSearch.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopSearch(v);
+            }
+        });
+        ImageButton searchButton = (ImageButton) findViewById(R.id.button_search);
+        searchButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchContact(v);
+            }
+        });
         toolbar.setTitle(R.string.app_name);
         if(contactsListView == null)
             contactsListView = new ContactsListView(this, callContact, messageContact, editContact);

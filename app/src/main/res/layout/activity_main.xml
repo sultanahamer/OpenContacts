@@ -33,7 +33,6 @@
             android:layout_width="wrap_content"
             android:background="@null"
             android:visibility="gone"
-            android:onClick="stopSearch"
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/btn_dialog"
             android:src="@android:drawable/btn_dialog"
@@ -46,9 +45,8 @@
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_menu_search"
             android:src="@android:drawable/ic_menu_search"
-            android:onClick="searchContact"
             android:layout_marginRight="16dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/button_search"
              />
     </android.support.v7.widget.Toolbar>
 
