@@ -3,6 +3,8 @@ package opencontacts.open.com.opencontacts.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import opencontacts.open.com.opencontacts.utils.Common;
+
 /**
  * Created by sultanm on 7/22/17.
  */
@@ -32,7 +34,11 @@ public class Contact implements Serializable{
 
     @Override
     public String toString() {
-        return name;
+        StringBuffer searchStringBuffer = new StringBuffer();
+        for(String phoneNumber : phoneNumbers)
+            searchStringBuffer.append(phoneNumber + " ");
+        searchStringBuffer.append(Common.getNumericKeyPadNumberForString(name));
+        return searchStringBuffer.toString();
     }
 
     public String getPhoneNumber(){
