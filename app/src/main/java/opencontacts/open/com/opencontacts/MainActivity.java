@@ -3,7 +3,6 @@ package opencontacts.open.com.opencontacts;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,6 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 import static opencontacts.open.com.opencontacts.ContactsListView.OnClickListener;
@@ -36,6 +36,15 @@ public class MainActivity extends Activity implements TextWatcher {
     private EditText searchBar;
     private ImageButton stopSearch;
     ContactsListView contactsListView;
+    CallLogListView callLogListView;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("onresume Running");
+        contactsListView.update();
+        callLogListView.update();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +56,8 @@ public class MainActivity extends Activity implements TextWatcher {
     private void fillCallLogTab() {
         LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
         loadCallLog();
-        call_logs_holder_layout.addView(new CallLogListView(this));
+        callLogListView = new CallLogListView(this);
+        call_logs_holder_layout.addView(callLogListView);
     }
 
     private void fillContactsTab() {
@@ -108,7 +118,6 @@ public class MainActivity extends Activity implements TextWatcher {
             Toast.makeText(this, R.string.grant_read_call_logs_permission, Toast.LENGTH_LONG).show();
             return;
         }
-        System.out.println("lastSavedFromPref " + getLastSavedCallLogDate());
         Cursor c = getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[]{CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.TYPE, CallLog.Calls.DATE}, CallLog.Calls.DATE + " > ?", new String[]{getLastSavedCallLogDate()}, CallLog.Calls.DATE + " DESC");
         String num, date, duration, callType;
         ArrayList<CallLogEntry> callLogEntries = new ArrayList<>();
@@ -131,14 +140,11 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private String getLastSavedCallLogDate() {
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-        return sharedPreferences.getString(preferenceLastCallLogSavedDate, "0");
+        return AndroidUtils.getAppsSharedPreferences(this).getString(preferenceLastCallLogSavedDate, "0");
     }
 
     private void setLastSavedCallLogDate(String date) {
-        System.out.println("lastSavedWritingtoPref " + date);
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.app_name), MODE_PRIVATE);
-        sharedPreferences.edit().putString(preferenceLastCallLogSavedDate, date).apply();
+        AndroidUtils.getAppsSharedPreferences(this).edit().putString(preferenceLastCallLogSavedDate, date).apply();
     }
 
     @Override
@@ -149,16 +155,6 @@ public class MainActivity extends Activity implements TextWatcher {
         long contactId = intent.getLongExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
         if(requestCode == REQUESTCODE_FOR_ADD_CONTACT && resultCode == RESULT_OK)
             contactsListView.addNewContactInView(contactId);
-        else if (requestCode == REQUESTCODE_FOR_UPDATE_CONTACT && resultCode == RESULT_OK)
-            try {
-                if(intent.getBooleanExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_CONTACT_DELETED, false))
-                    contactsListView.deleteContactAt(lastSelectedContactPosition);
-                else
-                    contactsListView.updateContactViewAt(lastSelectedContactPosition, contactId);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, R.string.error_while_saving_contact, Toast.LENGTH_LONG).show();
-            }
     }
 
     @Override

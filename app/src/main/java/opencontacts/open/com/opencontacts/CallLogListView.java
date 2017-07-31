@@ -15,8 +15,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
+import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
+import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
@@ -27,6 +29,7 @@ public class CallLogListView extends ListView {
     List <CallLogEntry> callLogEntries;
     CallLogListView thisClass = this;
     Context context;
+    CallLogEntry selectedCallLogEntry = null;
     ArrayAdapter<CallLogEntry> adapter;
     public CallLogListView(final Context context) {
         super(context);
@@ -51,10 +54,13 @@ public class CallLogListView extends ListView {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
+                View listItem = (View) v.getParent();
+                ViewGroup listViewGroup = (ViewGroup) listItem.getParent();
+                int position = listViewGroup.indexOfChild(listItem);
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
-                AndroidUtils.editContact(DomainUtils.getContact(contactId), context);
+                AndroidUtils.showContactDetails(DomainUtils.getContact(contactId), context);
             }
         };
 
@@ -84,5 +90,24 @@ public class CallLogListView extends ListView {
             }
         };
         this.setAdapter(adapter);
+    }
+
+    public void update() {
+        if(selectedCallLogEntry == null)
+            return;
+        int position = adapter.getPosition(selectedCallLogEntry);
+        if(position == -1)
+            return;
+        updateCallLogEntryAt(position);
+    }
+
+    private void updateCallLogEntryAt(int position) {
+        CallLogEntry callLogEntry = adapter.getItem(position);
+        Contact contact = ContactsDBHelper.getContactWithId(callLogEntry.getContactId());
+        callLogEntry.setName(contact.toString());
+        callLogEntry.save();
+        adapter.remove(adapter.getItem(position));
+        adapter.insert(callLogEntry, position);
+        adapter.notifyDataSetChanged();
     }
 }

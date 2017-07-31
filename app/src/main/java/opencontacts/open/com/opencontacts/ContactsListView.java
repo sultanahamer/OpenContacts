@@ -26,6 +26,7 @@ public class ContactsListView extends ListView {
     ContactsListView thisClass = this;
     public static final String ACTION_UPDATED = "action_updated";
     Context context;
+    Contact selectedContact = null;
     ArrayAdapter<Contact> adapter;
 
     public ContactsListView(final Context context) {
@@ -52,7 +53,8 @@ public class ContactsListView extends ListView {
             @Override
             public void onClick(View v) {
                 Contact contact = (Contact) v.getTag();
-                AndroidUtils.editContact(contact, context);
+                selectedContact = contact;
+                AndroidUtils.showContactDetails(contact, context);
             }
         };
 
@@ -86,15 +88,20 @@ public class ContactsListView extends ListView {
         });
     }
 
-    public void updateContactViewAt(int position, long contactId) throws Exception {
+    public void updateContactViewAt(int position, long contactId) {
         Contact oldContactInView = adapter.getItem(position);
         if(oldContactInView == null)
-            throw new Exception("Invalid contact position to be updated");
+            return;
         else{
             adapter.remove(adapter.getItem(position));
-            adapter.insert(DomainUtils.getContact(contactId), position);
+            Contact updatedContact = DomainUtils.getContact(contactId);
+            if(updatedContact == null){
+                adapter.notifyDataSetChanged();
+                return;
+            }
+            adapter.insert(updatedContact, position);
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     public void addNewContactInView(long newContactId) {
@@ -103,8 +110,20 @@ public class ContactsListView extends ListView {
         adapter.notifyDataSetChanged();
     }
 
-    public void deleteContactAt(int lastSelectedContactPosition) {
-        adapter.remove(adapter.getItem(lastSelectedContactPosition));
-        adapter.notifyDataSetChanged();
+    public void update() {
+        CharSequence textFilter = null;
+        if(this.hasTextFilter())
+            textFilter = this.getTextFilter();
+        if(selectedContact == null)
+            return;
+        int position = adapter.getPosition(selectedContact);
+        if(position == -1){
+            selectedContact = null;
+            return;
+        }
+        updateContactViewAt(position, selectedContact.getId());
+        this.clearTextFilter();
+        this.setFilterText(textFilter.toString());
+        selectedContact = null;
     }
 }

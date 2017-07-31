@@ -35,8 +35,9 @@ public class Contact implements Serializable{
     @Override
     public String toString() {
         StringBuffer searchStringBuffer = new StringBuffer();
+        searchStringBuffer.append(name).append(' ');
         for(String phoneNumber : phoneNumbers)
-            searchStringBuffer.append(phoneNumber + " ");
+            searchStringBuffer.append(phoneNumber).append(' ');
         searchStringBuffer.append(Common.getNumericKeyPadNumberForString(name));
         return searchStringBuffer.toString();
     }

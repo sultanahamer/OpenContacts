@@ -22,24 +22,32 @@
         <ImageButton
             android:background="@null"
             android:layout_gravity="end"
-            android:onClick="exportToContactsApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_menu_directions"
             android:src="@android:drawable/ic_menu_directions"
-            android:id="@+id/image_button_stop_search"
+            android:id="@+id/image_button_export_to_contacts_app"
             android:layout_marginRight="16dp"
             android:layout_weight="0.30" />
         <ImageButton
             android:background="@null"
             android:layout_gravity="end"
-            android:onClick="editContact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@android:drawable/ic_menu_edit"
             android:src="@android:drawable/ic_menu_edit"
             android:layout_marginRight="4dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/image_button_edit_contact"
+            />
+        <ImageButton
+            android:background="@null"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            android:src="@android:drawable/ic_menu_delete"
+            android:layout_marginRight="4dp"
+            android:id="@+id/image_button_delete_contact"
             />
     </android.support.v7.widget.Toolbar>
     <ListView

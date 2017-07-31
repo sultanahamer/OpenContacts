@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
+import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 
 public class ContactDetailsActivity extends Activity {
@@ -57,6 +59,32 @@ public class ContactDetailsActivity extends Activity {
             setResult(RESULT_CANCELED);
             finish();
         }
+
+        ((ImageButton)findViewById(R.id.image_button_delete_contact)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContactsDBHelper.deleteContact(contactId);
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        ((ImageButton)findViewById(R.id.image_button_edit_contact)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                AndroidUtils.showContactDetails(contact, getApplicationContext());
+//                setResult(RESULT_OK);
+//                finish();
+            }
+        });
+
+        ((ImageButton)findViewById(R.id.image_button_export_to_contacts_app)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exportToContactsApp();
+            }
+        });
+
         ListView listView = (ListView) findViewById(R.id.listview_contact_details);
         final List<String> mobileNumbers = contact.getPhoneNumbers();
         listView.setAdapter(new ArrayAdapter<String>(this, R.layout.contact_details_row, mobileNumbers){
@@ -75,7 +103,7 @@ public class ContactDetailsActivity extends Activity {
         });
     }
 
-    public void exportToContactsApp(View view) {
+    public void exportToContactsApp() {
         Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
 
         ArrayList<ContentValues> data = new ArrayList<ContentValues>();
