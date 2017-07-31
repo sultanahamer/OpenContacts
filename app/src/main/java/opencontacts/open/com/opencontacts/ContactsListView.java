@@ -123,7 +123,8 @@ public class ContactsListView extends ListView {
         }
         updateContactViewAt(position, selectedContact.getId());
         this.clearTextFilter();
-        this.setFilterText(textFilter.toString());
+        if(textFilter != null)
+            this.setFilterText(textFilter.toString());
         selectedContact = null;
     }
 }
