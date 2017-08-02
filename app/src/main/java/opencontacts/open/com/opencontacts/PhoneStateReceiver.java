@@ -25,8 +25,9 @@ public class PhoneStateReceiver extends BroadcastReceiver {
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
             Contact callingContact = ContactsDBHelper.getContact(incomingNumber);
             if(callingContact == null)
-                return;
-            drawContactID(context, callingContact);
+                drawContactID(context, new Contact("Unknown", ""));
+            else
+                drawContactID(context, callingContact);
         }
         else if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
             removeCallerIdDrawing(context);
@@ -45,14 +46,16 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
 
         layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
         layoutParams.x = 0;
         layoutParams.y = 0;
-
         windowManager.addView(drawOverIncomingCallLayout, layoutParams);
     }
 
