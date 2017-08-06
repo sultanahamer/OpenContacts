@@ -14,12 +14,11 @@ import android.widget.TextView;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
@@ -28,9 +27,7 @@ import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 public class CallLogListView extends ListView {
     List <CallLogEntry> callLogEntries;
-    CallLogListView thisClass = this;
     Context context;
-    CallLogEntry selectedCallLogEntry = null;
     ArrayAdapter<CallLogEntry> adapter;
     public CallLogListView(final Context context) {
         super(context);
@@ -55,16 +52,12 @@ public class CallLogListView extends ListView {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
-                View listItem = (View) v.getParent();
-                ViewGroup listViewGroup = (ViewGroup) listItem.getParent();
-                int position = listViewGroup.indexOfChild(listItem);
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
                 AndroidUtils.showContactDetails(DomainUtils.getContact(contactId), context);
             }
         };
-
 
         adapter = new ArrayAdapter<CallLogEntry>(context, R.layout.call_log_entry, callLogEntries){
             private LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -86,7 +79,7 @@ public class CallLogListView extends ListView {
                     ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_missed_black_24dp);
                 ((TextView)convertView.findViewById(R.id.text_view_duration)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
                 ((TextView)convertView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
-                String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a").format(new Date(Long.parseLong(callLogEntry.getDate())));
+                String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a", Locale.getDefault()).format(new Date(Long.parseLong(callLogEntry.getDate())));
                 ((TextView)convertView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
                 convertView.setTag(callLogEntry);
                 convertView.setOnClickListener(editContact);
@@ -96,22 +89,10 @@ public class CallLogListView extends ListView {
         this.setAdapter(adapter);
     }
 
-    public void update() {
-        if(selectedCallLogEntry == null)
-            return;
-        int position = adapter.getPosition(selectedCallLogEntry);
-        if(position == -1)
-            return;
-        updateCallLogEntryAt(position);
-    }
-
-    private void updateCallLogEntryAt(int position) {
-        CallLogEntry callLogEntry = adapter.getItem(position);
-        Contact contact = ContactsDBHelper.getContactWithId(callLogEntry.getContactId());
-        callLogEntry.setName(contact.toString());
-        callLogEntry.save();
-        adapter.remove(adapter.getItem(position));
-        adapter.insert(callLogEntry, position);
+    public void addNewEntries(List<CallLogEntry> newCallLogEntries) {
+        for(int i=0,totalEntries = newCallLogEntries.size(); i < totalEntries; i++){
+            adapter.insert(newCallLogEntries.get(i), i);
+        }
         adapter.notifyDataSetChanged();
     }
 }
