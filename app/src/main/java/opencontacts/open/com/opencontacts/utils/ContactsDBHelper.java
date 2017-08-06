@@ -3,6 +3,7 @@ package opencontacts.open.com.opencontacts.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 
@@ -19,13 +20,18 @@ public class ContactsDBHelper {
         return Contact.listAll(Contact.class, "first_Name");
     }
 
-    public static void deleteContact(Long id){
-        Contact dbContact = Contact.findById(Contact.class, id);
+    public static void deleteContact(Long contactId){
+        Contact dbContact = Contact.findById(Contact.class, contactId);
         if(dbContact == null)
             return;
         List<PhoneNumber> dbPhoneNumbers = dbContact.getAllPhoneNumbers();
         for(PhoneNumber dbPhoneNumber : dbPhoneNumbers)
             dbPhoneNumber.delete();
+        List<CallLogEntry> callLogEntries = CallLogEntry.getCallLogEntriesFor(contactId);
+        for(CallLogEntry callLogEntry : callLogEntries){
+            callLogEntry.setId((long) -1);
+            callLogEntry.save();
+        }
         dbContact.delete();
     }
 

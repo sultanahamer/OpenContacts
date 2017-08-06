@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 import opencontacts.open.com.opencontacts.ContactDetailsActivity;
 import opencontacts.open.com.opencontacts.EditContactActivity;
+import opencontacts.open.com.opencontacts.MainActivity;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 
@@ -28,18 +29,11 @@ public class AndroidUtils {
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-    public static void showContactDetails(Contact selectedContact, Context context){
-     context.startActivity(new Intent(context, ContactDetailsActivity.class)
+    public static Intent getIntentToShowContactDetails(Contact selectedContact, Context context){
+     return new Intent(context, ContactDetailsActivity.class)
                     .putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, (Serializable) selectedContact)
-                    .putExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId()));
+                    .putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId());
     }
-    public static void showContactDetailsz(Contact selectedContact, Context context) {
-        Intent editContact = new Intent(context, ContactDetailsActivity.class);
-        editContact.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, (Serializable) selectedContact);
-        editContact.putExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId());
-        context.startActivity(editContact);
-    }
-
     public static SharedPreferences getAppsSharedPreferences(Context context){
         return context.getSharedPreferences(context.getString(R.string.app_name), context.MODE_PRIVATE);
     }

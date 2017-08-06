@@ -17,6 +17,9 @@ import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 
 public class MainActivity extends Activity implements TextWatcher {
     private int REQUESTCODE_FOR_ADD_CONTACT = 1;
+    public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
+    public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
+    public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";
     private Toolbar toolbar;
     private EditText searchBar;
     private ImageButton stopSearch;
@@ -40,16 +43,10 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private void refresh(){
-        int currentTab = tabHost.getCurrentTab();
-        if(currentTab == 0){
-            List<CallLogEntry> newCallLogEntries = callLogLoader.loadCallLog(MainActivity.this);
-            if(newCallLogEntries == null)
-                return;
-            callLogListView.addNewEntries(newCallLogEntries);
-        }
-        else if(currentTab == 1){
-
-        }
+        List<CallLogEntry> newCallLogEntries = callLogLoader.loadCallLog(MainActivity.this);
+        if(newCallLogEntries == null)
+            return;
+        callLogListView.addNewEntries(newCallLogEntries);
     }
     private void fillCallLogTab() {
         LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
@@ -109,9 +106,16 @@ public class MainActivity extends Activity implements TextWatcher {
         super.onActivityResult(requestCode, resultCode, intent);
         if(resultCode == RESULT_CANCELED)
             return;
-        long contactId = intent.getLongExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
+        long contactId = intent.getLongExtra(INTENT_EXTRA_LONG_CONTACT_ID, -1);
         if(requestCode == REQUESTCODE_FOR_ADD_CONTACT && resultCode == RESULT_OK)
             contactsListView.addNewContactInView(contactId);
+        else if(requestCode == REQUESTCODE_FOR_SHOW_CONTACT_DETAILS && resultCode == RESULT_OK){
+            if(intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_CONTACT_DELETED, false)){
+                contactsListView.deleteContactInView(contactId);
+            }
+            else
+                contactsListView.updateContactInView(contactId);
+        }
     }
 
     @Override

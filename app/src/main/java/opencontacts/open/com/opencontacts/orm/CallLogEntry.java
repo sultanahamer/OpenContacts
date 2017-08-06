@@ -2,6 +2,8 @@ package opencontacts.open.com.opencontacts.orm;
 
 import com.orm.SugarRecord;
 
+import java.util.List;
+
 /**
  * Created by sultanm on 7/31/17.
  */
@@ -85,5 +87,9 @@ public class CallLogEntry extends SugarRecord {
 
     public void setCallType(String callType) {
         this.callType = callType;
+    }
+
+    public static List<CallLogEntry> getCallLogEntriesFor(long contactId){
+        return find(CallLogEntry.class, "contact_Id = ?", "" + contactId);
     }
 }

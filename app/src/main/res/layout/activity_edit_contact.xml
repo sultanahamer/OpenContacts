@@ -98,17 +98,6 @@
         android:onClick="saveContact"
         android:id="@+id/image_button_save" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        android:src="@android:drawable/ic_menu_delete"
-        android:layout_alignTop="@+id/image_button_save"
-        android:layout_toLeftOf="@+id/image_button_save"
-        android:layout_toStartOf="@+id/image_button_save"
-        android:onClick="delete"
-        android:id="@+id/image_button_delete" />
-
 </RelativeLayout>
 
 

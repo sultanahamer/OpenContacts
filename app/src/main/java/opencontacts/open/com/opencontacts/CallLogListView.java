@@ -1,6 +1,7 @@
 package opencontacts.open.com.opencontacts;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
@@ -27,25 +29,25 @@ import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 public class CallLogListView extends ListView {
     List <CallLogEntry> callLogEntries;
-    Context context;
+    Activity activity;
     ArrayAdapter<CallLogEntry> adapter;
-    public CallLogListView(final Context context) {
-        super(context);
-        this.context = context;
+    public CallLogListView(final Activity activity) {
+        super(activity);
+        this.activity = activity;
         callLogEntries = CallLogEntry.find(CallLogEntry.class, null, null, null, "date desc", "100");
 
         final OnClickListener callContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
-                AndroidUtils.call(callLogEntry.getPhoneNumber(), context);
+                AndroidUtils.call(callLogEntry.getPhoneNumber(), activity);
             }
         };
         final OnClickListener messageContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
-                AndroidUtils.message(callLogEntry.getPhoneNumber(), context);
+                AndroidUtils.message(callLogEntry.getPhoneNumber(), activity);
             }
         };
         final OnClickListener editContact = new OnClickListener() {
@@ -55,12 +57,16 @@ public class CallLogListView extends ListView {
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
-                AndroidUtils.showContactDetails(DomainUtils.getContact(contactId), context);
+                Contact contact = DomainUtils.getContact(contactId);
+                if(contact == null)
+                    return;
+                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(DomainUtils.getContact(contactId), CallLogListView.this.activity);
+                CallLogListView.this.activity.startActivityForResult(showContactDetails, MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
             }
         };
 
-        adapter = new ArrayAdapter<CallLogEntry>(context, R.layout.call_log_entry, callLogEntries){
-            private LayoutInflater layoutInflater = LayoutInflater.from(context);
+        adapter = new ArrayAdapter<CallLogEntry>(CallLogListView.this.activity, R.layout.call_log_entry, callLogEntries){
+            private LayoutInflater layoutInflater = LayoutInflater.from(CallLogListView.this.activity);
             @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {

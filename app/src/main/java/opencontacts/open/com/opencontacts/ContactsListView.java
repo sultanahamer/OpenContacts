@@ -1,5 +1,6 @@
 package opencontacts.open.com.opencontacts;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -25,13 +26,13 @@ public class ContactsListView extends ListView {
     List <Contact> contacts;
     ContactsListView thisClass = this;
     public static final String ACTION_UPDATED = "action_updated";
-    Context context;
+    Context activity;
     Contact selectedContact = null;
     ArrayAdapter<Contact> adapter;
 
-    public ContactsListView(final Context context) {
-        super(context);
-        this.context = context;
+    public ContactsListView(final Activity activity) {
+        super(activity);
+        this.activity = activity;
         setTextFilterEnabled(true);
         List<Contact> contacts = DomainUtils.getAllContacts();
 
@@ -39,27 +40,27 @@ public class ContactsListView extends ListView {
             @Override
             public void onClick(View v) {
                 Contact contact = (Contact) ((View)v.getParent()).getTag();
-                AndroidUtils.call(contact.getPhoneNumber(), context);
+                AndroidUtils.call(contact.getPhoneNumber(), ContactsListView.this.activity);
             }
         };
         final OnClickListener messageContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Contact contact = (Contact) ((View)v.getParent()).getTag();
-                AndroidUtils.message(contact.getPhoneNumber(), context);
+                AndroidUtils.message(contact.getPhoneNumber(), ContactsListView.this.activity);
             }
         };
-        final OnClickListener editContact = new OnClickListener() {
+        final OnClickListener showContactDetails = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Contact contact = (Contact) v.getTag();
                 selectedContact = contact;
-                AndroidUtils.showContactDetails(contact, context);
+                activity.startActivityForResult(AndroidUtils.getIntentToShowContactDetails(contact, ContactsListView.this.activity), MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
             }
         };
 
-        adapter = new ArrayAdapter<Contact>(context, R.layout.contact, contacts){
-            private LayoutInflater layoutInflater = LayoutInflater.from(context);
+        adapter = new ArrayAdapter<Contact>(ContactsListView.this.activity, R.layout.contact, contacts){
+            private LayoutInflater layoutInflater = LayoutInflater.from(ContactsListView.this.activity);
             @NonNull
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -71,7 +72,7 @@ public class ContactsListView extends ListView {
                 ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
                 ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 convertView.setTag(contact);
-                convertView.setOnClickListener(editContact);
+                convertView.setOnClickListener(showContactDetails);
                 return convertView;
             }
         };
@@ -110,21 +111,49 @@ public class ContactsListView extends ListView {
         adapter.notifyDataSetChanged();
     }
 
-    public void update() {
+    public  void deleteContactViewAt(int position){
+        adapter.remove(adapter.getItem(position));
+        adapter.notifyDataSetChanged();
+    }
+
+    public void deleteContactInView(long contactId) {
+        if(selectedContact == null)
+            return;
         CharSequence textFilter = null;
         if(this.hasTextFilter())
             textFilter = this.getTextFilter();
-        if(selectedContact == null)
-            return;
         int position = adapter.getPosition(selectedContact);
         if(position == -1){
             selectedContact = null;
             return;
         }
-        updateContactViewAt(position, selectedContact.getId());
-        this.clearTextFilter();
-        if(textFilter != null)
-            this.setFilterText(textFilter.toString());
-        selectedContact = null;
+        if(contactId == selectedContact.getId()){
+            deleteContactViewAt(position);
+            this.clearTextFilter();
+            if(textFilter != null)
+                this.setFilterText(textFilter.toString());
+            selectedContact = null;
+        }
+
+    }
+
+    public void updateContactInView(long contactId) {
+        if(selectedContact == null)
+            return;
+        CharSequence textFilter = null;
+        if(this.hasTextFilter())
+            textFilter = this.getTextFilter();
+        int position = adapter.getPosition(selectedContact);
+        if(position == -1){
+            selectedContact = null;
+            return;
+        }
+        if(contactId == selectedContact.getId()){
+            updateContactViewAt(position, contactId);
+            this.clearTextFilter();
+            if(textFilter != null)
+                this.setFilterText(textFilter.toString());
+            selectedContact = null;
+        }
     }
 }

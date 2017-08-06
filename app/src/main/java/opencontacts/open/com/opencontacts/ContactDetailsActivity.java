@@ -2,10 +2,12 @@ package opencontacts.open.com.opencontacts;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +28,8 @@ import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 public class ContactDetailsActivity extends Activity {
     private Contact contact;
-    private long contactId;
     private Toolbar toolbar;
+    private int REQUESTCODE_FOR_EDIT_CONTACT = 1;
 
     private View.OnClickListener callContact = new View.OnClickListener() {
         @Override
@@ -52,9 +54,8 @@ public class ContactDetailsActivity extends Activity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent intent = getIntent();
         contact = (Contact) intent.getSerializableExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
-        contactId = intent.getLongExtra(EditContactActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
         toolbar.setTitle(contact.getName());
-        if(contactId == -1){
+        if(contact.getId() == -1){
             Toast.makeText(this, R.string.error_while_loading_contact, Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED);
             finish();
@@ -63,18 +64,30 @@ public class ContactDetailsActivity extends Activity {
         ((ImageButton)findViewById(R.id.image_button_delete_contact)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactsDBHelper.deleteContact(contactId);
-                setResult(RESULT_OK);
-                finish();
+                new AlertDialog.Builder(ContactDetailsActivity.this)
+                        .setMessage("Do you want to delete?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ContactsDBHelper.deleteContact(contact.getId());
+                                Toast.makeText(ContactDetailsActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                                Intent result = new Intent();
+                                result.putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, contact.getId());
+                                result.putExtra(MainActivity.INTENT_EXTRA_BOOLEAN_CONTACT_DELETED, true);
+                                setResult(RESULT_OK, result);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("No", null).show();
             }
         });
 
         ((ImageButton)findViewById(R.id.image_button_edit_contact)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                AndroidUtils.showContactDetails(contact, getApplicationContext());
-//                setResult(RESULT_OK);
-//                finish();
+                Intent editContact = new Intent(ContactDetailsActivity.this, EditContactActivity.class);
+                editContact.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, contact);
+                ContactDetailsActivity.this.startActivityForResult(editContact, REQUESTCODE_FOR_EDIT_CONTACT);
             }
         });
 
@@ -101,6 +114,17 @@ public class ContactDetailsActivity extends Activity {
                 return convertView;
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if(resultCode == RESULT_CANCELED)
+            return;
+        if(requestCode == REQUESTCODE_FOR_EDIT_CONTACT && resultCode == RESULT_OK){
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
     public void exportToContactsApp() {
