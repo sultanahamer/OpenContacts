@@ -1,13 +1,8 @@
 package opencontacts.open.com.opencontacts;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.CallLog;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,32 +11,21 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-
-import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 import static opencontacts.open.com.opencontacts.ContactsListView.OnClickListener;
 
 
 public class MainActivity extends Activity implements TextWatcher {
-    private String preferenceLastCallLogSavedDate = "preference_last_call_log_saved_date";
     private int REQUESTCODE_FOR_ADD_CONTACT = 1;
-    private int REQUESTCODE_FOR_UPDATE_CONTACT = 2;
-    private int lastSelectedContactPosition = -1;
     private Toolbar toolbar;
     private EditText searchBar;
     private ImageButton stopSearch;
-    ContactsListView contactsListView;
-    CallLogListView callLogListView;
+    private ContactsListView contactsListView;
+    private CallLogListView callLogListView;
 
     @Override
     protected void onResume() {
         super.onResume();
-        System.out.println("onresume Running");
         contactsListView.update();
         callLogListView.update();
     }
@@ -55,7 +39,7 @@ public class MainActivity extends Activity implements TextWatcher {
 
     private void fillCallLogTab() {
         LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
-        loadCallLog();
+        new CallLogLoader().loadCallLog(this);
         callLogListView = new CallLogListView(this);
         call_logs_holder_layout.addView(callLogListView);
     }
@@ -104,47 +88,6 @@ public class MainActivity extends Activity implements TextWatcher {
 
         fillContactsTab();
         fillCallLogTab();
-    }
-
-    private void loadCallLog() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Toast.makeText(this, R.string.grant_read_call_logs_permission, Toast.LENGTH_LONG).show();
-            return;
-        }
-        Cursor c = getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[]{CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.TYPE, CallLog.Calls.DATE}, CallLog.Calls.DATE + " > ?", new String[]{getLastSavedCallLogDate()}, CallLog.Calls.DATE + " DESC");
-        String num, date, duration, callType;
-        ArrayList<CallLogEntry> callLogEntries = new ArrayList<>();
-        if(c.getCount() == 0)
-            return;
-        while(c.moveToNext()){
-            num = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));// for  number
-            duration = c.getString(c.getColumnIndex(CallLog.Calls.DURATION));// for duration
-            date = c.getString(c.getColumnIndex(CallLog.Calls.DATE));// for duration
-            callType = c.getString(c.getColumnIndex(CallLog.Calls.TYPE));// for call type, Incoming or out going
-            opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(num);
-            if(contact == null)
-                callLogEntries.add(new CallLogEntry(null, (long)-1, num, duration, callType, date));
-            else
-                callLogEntries.add(new CallLogEntry(contact.toString(), contact.getId(), num, duration, callType, date));
-        }
-        CallLogEntry.saveInTx(callLogEntries);
-        c.moveToFirst();
-        setLastSavedCallLogDate(c.getString(c.getColumnIndex(CallLog.Calls.DATE)));
-    }
-
-    private String getLastSavedCallLogDate() {
-        return AndroidUtils.getAppsSharedPreferences(this).getString(preferenceLastCallLogSavedDate, "0");
-    }
-
-    private void setLastSavedCallLogDate(String date) {
-        AndroidUtils.getAppsSharedPreferences(this).edit().putString(preferenceLastCallLogSavedDate, date).apply();
     }
 
     @Override

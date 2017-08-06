@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
@@ -78,12 +79,15 @@ public class CallLogListView extends ListView {
                 ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
                 ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.INCOMING_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_button_call_type)).setImageResource(android.R.drawable.sym_call_incoming);
+                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_received_black_24dp);
                 else if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.OUTGOING_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_button_call_type)).setImageResource(android.R.drawable.sym_call_outgoing);
+                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_made_black_24dp);
                 else if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.MISSED_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_button_call_type)).setImageResource(android.R.drawable.sym_call_missed);
-                ((TextView)convertView.findViewById(R.id.duration_of_call)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
+                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_missed_black_24dp);
+                ((TextView)convertView.findViewById(R.id.text_view_duration)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
+                ((TextView)convertView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
+                String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a").format(new Date(Long.parseLong(callLogEntry.getDate())));
+                ((TextView)convertView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
                 convertView.setTag(callLogEntry);
                 convertView.setOnClickListener(editContact);
                 return convertView;

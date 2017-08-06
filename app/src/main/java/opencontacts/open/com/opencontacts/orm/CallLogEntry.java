@@ -7,12 +7,21 @@ import com.orm.SugarRecord;
  */
 
 public class CallLogEntry extends SugarRecord {
+    int simId;
     String name;
     long contactId;
     String phoneNumber;
     String duration;
     String callType;
     String date; //in milliseconds from epoch type long;
+
+    public int getSimId() {
+        return simId;
+    }
+
+    public void setSimId(int simId) {
+        this.simId = simId;
+    }
 
     public String getDate() {
         return date;
@@ -26,13 +35,16 @@ public class CallLogEntry extends SugarRecord {
         super();
     }
 
-    public CallLogEntry(String name, long contactId, String phoneNumber, String duration, String callType, String date) {
+    public CallLogEntry(String name, long contactId, String phoneNumber, String duration, String callType, String date, String simId) {
         this.name = name;
         this.contactId = contactId;
         this.phoneNumber = phoneNumber;
         this.duration = duration;
         this.callType = callType;
         this.date = date;
+        if(simId == null)
+            return;
+        this.simId = Integer.parseInt(simId);
     }
 
     public String getName() {
