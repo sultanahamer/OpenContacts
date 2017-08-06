@@ -16,7 +16,7 @@ import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 
 
 public class MainActivity extends Activity implements TextWatcher {
-    private int REQUESTCODE_FOR_ADD_CONTACT = 1;
+    public static int REQUESTCODE_FOR_ADD_CONTACT = 1;
     public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
     public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
     public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";

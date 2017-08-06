@@ -50,7 +50,17 @@ public class CallLogListView extends ListView {
                 AndroidUtils.message(callLogEntry.getPhoneNumber(), activity);
             }
         };
-        final OnClickListener editContact = new OnClickListener() {
+        final OnClickListener addContact = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
+                Intent addContact = new Intent(activity, EditContactActivity.class);
+                addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
+                addContact.putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, callLogEntry.getPhoneNumber());
+                activity.startActivityForResult(addContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
+            }
+        };
+        final OnClickListener showContactDetails = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
@@ -69,27 +79,28 @@ public class CallLogListView extends ListView {
             private LayoutInflater layoutInflater = LayoutInflater.from(CallLogListView.this.activity);
             @NonNull
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View reusableView, ViewGroup parent) {
                 CallLogEntry callLogEntry = getItem(position);
-                if(convertView == null)
-                    convertView = layoutInflater.inflate(R.layout.call_log_entry, parent, false);
-                ((TextView) convertView.findViewById(R.id.textview_full_name)).setText(callLogEntry.getName());
-                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(callLogEntry.getPhoneNumber());
-                ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
-                ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
+                if(reusableView == null)
+                    reusableView = layoutInflater.inflate(R.layout.call_log_entry, parent, false);
+                ((TextView) reusableView.findViewById(R.id.textview_full_name)).setText(callLogEntry.getName());
+                ((TextView) reusableView.findViewById(R.id.textview_phone_number)).setText(callLogEntry.getPhoneNumber());
+                ((ImageButton)reusableView.findViewById(R.id.button_call)).setOnClickListener(callContact);
+                ((ImageButton)reusableView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.INCOMING_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_received_black_24dp);
+                    ((ImageView)reusableView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_received_black_24dp);
                 else if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.OUTGOING_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_made_black_24dp);
+                    ((ImageView)reusableView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_made_black_24dp);
                 else if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.MISSED_TYPE)))
-                    ((ImageView)convertView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_missed_black_24dp);
-                ((TextView)convertView.findViewById(R.id.text_view_duration)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
-                ((TextView)convertView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
+                    ((ImageView)reusableView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_missed_black_24dp);
+                ((TextView)reusableView.findViewById(R.id.text_view_duration)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
+                ((TextView)reusableView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
                 String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a", Locale.getDefault()).format(new Date(Long.parseLong(callLogEntry.getDate())));
-                ((TextView)convertView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
-                convertView.setTag(callLogEntry);
-                convertView.setOnClickListener(editContact);
-                return convertView;
+                ((TextView)reusableView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
+                reusableView.findViewById(R.id.image_button_add_contact).setOnClickListener(addContact);
+                reusableView.setTag(callLogEntry);
+                reusableView.setOnClickListener(showContactDetails);
+                return reusableView;
             }
         };
         this.setAdapter(adapter);

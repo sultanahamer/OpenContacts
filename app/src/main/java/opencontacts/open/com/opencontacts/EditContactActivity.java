@@ -16,6 +16,7 @@ public class EditContactActivity extends AppCompatActivity {
     Contact contact = null;
     public static final String INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT = "add_new_contact";
     public static final String INTENT_EXTRA_CONTACT_CONTACT_DETAILS = "contact_details";
+    public static final String INTENT_EXTRA_STRING_PHONE_NUMBER = "phone_number";
     TextView textView_firstName;
     TextView textView_lastName;
     TextView textView_mobileNumber;
@@ -39,6 +40,10 @@ public class EditContactActivity extends AppCompatActivity {
             textView_firstName.setText(contact.getFirstName());
             textView_lastName.setText(contact.getLastName());
             textView_mobileNumber.setText(contact.getPhoneNumber());
+        }
+        else{
+            String mobileNumber = intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER);
+            textView_mobileNumber.setText(mobileNumber);
         }
 
     }

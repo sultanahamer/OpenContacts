@@ -92,4 +92,15 @@
         android:layout_toRightOf="@+id/image_view_call_type"
         android:layout_toEndOf="@+id/image_view_call_type" />
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:src="@android:drawable/ic_input_add"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/image_button_add_contact"
+        android:layout_below="@+id/button_call"
+        android:layout_alignBottom="@+id/text_view_timestamp" />
+
 </RelativeLayout>
