@@ -95,7 +95,7 @@ public class CallLogListView extends ListView {
                     ((ImageView)reusableView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_missed_black_24dp);
                 ((TextView)reusableView.findViewById(R.id.text_view_duration)).setText(Common.getDurationInMinsAndSecs(Integer.valueOf(callLogEntry.getDuration())));
                 ((TextView)reusableView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
-                String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a", Locale.getDefault()).format(new Date(Long.parseLong(callLogEntry.getDate())));
+                String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  hh:mm a", Locale.getDefault()).format(new Date(Long.parseLong(callLogEntry.getDate())));
                 ((TextView)reusableView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
                 View addButton = reusableView.findViewById(R.id.image_button_add_contact);
                 if(callLogEntry.getContactId() == -1){
