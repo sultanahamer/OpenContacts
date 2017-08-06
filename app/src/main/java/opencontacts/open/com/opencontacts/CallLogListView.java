@@ -97,7 +97,12 @@ public class CallLogListView extends ListView {
                 ((TextView)reusableView.findViewById(R.id.text_view_sim)).setText(String.valueOf(callLogEntry.getSimId()));
                 String timeStampOfCall = new java.text.SimpleDateFormat("dd/MM  HH:mm a", Locale.getDefault()).format(new Date(Long.parseLong(callLogEntry.getDate())));
                 ((TextView)reusableView.findViewById(R.id.text_view_timestamp)).setText(timeStampOfCall);
-                reusableView.findViewById(R.id.image_button_add_contact).setOnClickListener(addContact);
+                View addButton = reusableView.findViewById(R.id.image_button_add_contact);
+                if(callLogEntry.getContactId() == -1){
+                    addButton.setOnClickListener(addContact);
+                }
+                else
+                    addButton.setVisibility(View.GONE);
                 reusableView.setTag(callLogEntry);
                 reusableView.setOnClickListener(showContactDetails);
                 return reusableView;
