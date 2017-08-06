@@ -58,6 +58,8 @@ public class ContactsDBHelper {
     }
 
     public static Contact getContact(String incomingNumber) {
+        if(incomingNumber.length() < 8)
+            return null; //TODO: find a better logic to determine how to compare mobile number excluding code.
         String phoneNumberToSearch = incomingNumber.length() > 10 ? incomingNumber.substring(incomingNumber.length() - 10) : incomingNumber;
         List<PhoneNumber> phoneNumbers = PhoneNumber.find(PhoneNumber.class, "phone_Number like ?", "%" + phoneNumberToSearch);
         if(phoneNumbers.size() == 0)

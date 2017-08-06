@@ -40,9 +40,15 @@ public class CallLogLoader {
     }
     private String preferenceLastCallLogSavedDate = "preference_last_call_log_saved_date";
 
-    public void loadCallLog(Context context) {
+    public List<CallLogEntry> loadCallLog(Context context) {
         if(simsInfo == null)
             createSimsInfo(context);
+        List<CallLogEntry> callLogEntries = getCallLogEntries(context);
+        CallLogEntry.saveInTx(callLogEntries);
+        return callLogEntries;
+    }
+
+    private List<CallLogEntry> getCallLogEntries(Context context){
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -52,15 +58,10 @@ public class CallLogLoader {
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             Toast.makeText(context, R.string.grant_read_call_logs_permission, Toast.LENGTH_LONG).show();
-            return;
+            return null;
         }
-
-        CallLogEntry.saveInTx(getCallLogEntries(context));
-    }
-
-    private List<CallLogEntry> getCallLogEntries(Context context){
         Cursor c;
-        String num, date, duration, callType, subscriptionId;
+        String mobileNumberInvolvedInCall, dateOfCall, durationOfCall, callType, subscriptionIdForCall;
         ArrayList<CallLogEntry> callLogEntries = new ArrayList<>();
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1){
             c = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[]{CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.PHONE_ACCOUNT_ID}, CallLog.Calls.DATE + " > ?", new String[]{getLastSavedCallLogDate(context)}, CallLog.Calls.DATE + " DESC");
@@ -72,21 +73,21 @@ public class CallLogLoader {
             int columnIndexForCallType = c.getColumnIndex(CallLog.Calls.TYPE);
             int columnIndexForSubscriptionId = c.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
             while(c.moveToNext()){
-                num = c.getString(columnIndexForNumber);// for  number
-                duration = c.getString(columnIndexForDuration);// for duration
-                date = c.getString(columnIndexForDate);
+                mobileNumberInvolvedInCall = c.getString(columnIndexForNumber);// for  number
+                durationOfCall = c.getString(columnIndexForDuration);// for duration
+                dateOfCall = c.getString(columnIndexForDate);
                 callType = c.getString(columnIndexForCallType);// for call type, Incoming or out going
-                subscriptionId = c.getString(columnIndexForSubscriptionId);
-                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(num);
+                subscriptionIdForCall = c.getString(columnIndexForSubscriptionId);
+                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(mobileNumberInvolvedInCall);
                 if(contact == null)
-                    callLogEntries.add(new CallLogEntry(null, (long)-1, num, duration, callType, date, subscriptionId));
+                    callLogEntries.add(new CallLogEntry(null, (long)-1, mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, subscriptionIdForCall));
                 else
-                    callLogEntries.add(new CallLogEntry(contact.toString(), contact.getId(), num, duration, callType, date, subscriptionId));
+                    callLogEntries.add(new CallLogEntry(contact.toString(), contact.getId(), mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, subscriptionIdForCall));
             }
             c.moveToFirst();
             setLastSavedCallLogDate(c.getString(columnIndexForDate), context);
+            c.close();
         }
-
         else {
             c = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[]{CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.TYPE, CallLog.Calls.DATE}, CallLog.Calls.DATE + " > ?", new String[]{getLastSavedCallLogDate(context)}, CallLog.Calls.DATE + " DESC");
             if(c.getCount() == 0)
@@ -95,25 +96,22 @@ public class CallLogLoader {
             int columnIndexForDuration = c.getColumnIndex(CallLog.Calls.DURATION);
             int columnIndexForDate = c.getColumnIndex(CallLog.Calls.DATE);
             int columnIndexForCallType = c.getColumnIndex(CallLog.Calls.TYPE);
-            int columnIndexForSubscriptionId = c.getColumnIndex(CallLog.Calls.PHONE_ACCOUNT_ID);
             while(c.moveToNext()){
-                num = c.getString(columnIndexForNumber);// for  number
-                duration = c.getString(columnIndexForDuration);// for duration
-                date = c.getString(columnIndexForDate);
+                mobileNumberInvolvedInCall = c.getString(columnIndexForNumber);// for  number
+                durationOfCall = c.getString(columnIndexForDuration);// for duration
+                dateOfCall = c.getString(columnIndexForDate);
                 callType = c.getString(columnIndexForCallType);// for call type, Incoming or out going
-                subscriptionId = c.getString(columnIndexForSubscriptionId);
 
-                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(num);
+                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(mobileNumberInvolvedInCall);
                 if(contact == null)
-                    callLogEntries.add(new CallLogEntry(null, (long)-1, num, duration, callType, date, subscriptionId));
+                    callLogEntries.add(new CallLogEntry(null, (long)-1, mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, "0"));
                 else
-                    callLogEntries.add(new CallLogEntry(contact.toString(), contact.getId(), num, duration, callType, date, subscriptionId));
+                    callLogEntries.add(new CallLogEntry(contact.toString(), contact.getId(), mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, "0"));
             }
             c.moveToFirst();
             setLastSavedCallLogDate(c.getString(columnIndexForDate), context);
+            c.close();
         }
-
-
         return callLogEntries;
     }
 
@@ -124,6 +122,4 @@ public class CallLogLoader {
     private void setLastSavedCallLogDate(String date, Context context) {
         AndroidUtils.getAppsSharedPreferences(context).edit().putString(preferenceLastCallLogSavedDate, date).apply();
     }
-
-
 }

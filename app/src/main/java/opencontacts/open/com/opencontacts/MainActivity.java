@@ -11,8 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
-
-import static opencontacts.open.com.opencontacts.ContactsListView.OnClickListener;
+import java.util.List;
+import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 
 
 public class MainActivity extends Activity implements TextWatcher {
@@ -22,21 +22,35 @@ public class MainActivity extends Activity implements TextWatcher {
     private ImageButton stopSearch;
     private ContactsListView contactsListView;
     private CallLogListView callLogListView;
+    private CallLogLoader callLogLoader;
+    private TabHost tabHost;
 
     @Override
     protected void onResume() {
         super.onResume();
-        contactsListView.update();
-        callLogListView.update();
+        refresh();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        callLogLoader = new CallLogLoader();
         setContentView(R.layout.activity_tabbed);
         setupTabs();
     }
 
+    private void refresh(){
+        int currentTab = tabHost.getCurrentTab();
+        if(currentTab == 0){
+            List<CallLogEntry> newCallLogEntries = callLogLoader.loadCallLog(MainActivity.this);
+            if(newCallLogEntries == null)
+                return;
+            callLogListView.addNewEntries(newCallLogEntries);
+        }
+        else if(currentTab == 1){
+
+        }
+    }
     private void fillCallLogTab() {
         LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
         new CallLogLoader().loadCallLog(this);
@@ -51,14 +65,14 @@ public class MainActivity extends Activity implements TextWatcher {
         searchBar = (EditText) findViewById(R.id.text_edit_search_box);
         searchBar.addTextChangedListener(this);
         stopSearch = (ImageButton) findViewById(R.id.image_button_stop_search);
-        stopSearch.setOnClickListener(new OnClickListener() {
+        stopSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stopSearch(v);
             }
         });
         ImageButton searchButton = (ImageButton) findViewById(R.id.button_search);
-        searchButton.setOnClickListener(new OnClickListener() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchContact(v);
@@ -71,20 +85,20 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private void setupTabs() {
-        TabHost host = (TabHost)findViewById(R.id.tab_host);
-        host.setup();
+        tabHost = (TabHost)findViewById(R.id.tab_host);
+        tabHost.setup();
 
         //Tab 1
-        TabHost.TabSpec spec = host.newTabSpec("Call Log");
+        TabHost.TabSpec spec = tabHost.newTabSpec("Call Log");
         spec.setContent(R.id.tab_call_log);
         spec.setIndicator("Call Log");
-        host.addTab(spec);
+        tabHost.addTab(spec);
 
         //Tab 2
-        spec = host.newTabSpec("Contacts");
+        spec = tabHost.newTabSpec("Contacts");
         spec.setContent(R.id.tab_contacts);
         spec.setIndicator("Contacts");
-        host.addTab(spec);
+        tabHost.addTab(spec);
 
         fillContactsTab();
         fillCallLogTab();
