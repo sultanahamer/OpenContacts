@@ -18,6 +18,7 @@ import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.ContactsListView;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 
 public class MainActivity extends Activity implements TextWatcher {
@@ -138,7 +139,7 @@ public class MainActivity extends Activity implements TextWatcher {
         toolbar.setTitle("");
         searchBar.setVisibility(View.VISIBLE);
         stopSearch.setVisibility(View.VISIBLE);
-        searchBar.requestFocus();
+        AndroidUtils.showSoftKeyboard(searchBar, getBaseContext());
     }
 
     @Override
