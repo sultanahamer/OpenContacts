@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.activities;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;

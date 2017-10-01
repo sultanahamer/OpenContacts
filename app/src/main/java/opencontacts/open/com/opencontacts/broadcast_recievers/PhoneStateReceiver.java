@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.broadcast_recievers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 

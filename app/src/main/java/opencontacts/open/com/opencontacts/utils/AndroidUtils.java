@@ -7,9 +7,9 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
-import opencontacts.open.com.opencontacts.ContactDetailsActivity;
-import opencontacts.open.com.opencontacts.EditContactActivity;
-import opencontacts.open.com.opencontacts.MainActivity;
+import opencontacts.open.com.opencontacts.activities.ContactDetailsActivity;
+import opencontacts.open.com.opencontacts.activities.EditContactActivity;
+import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 

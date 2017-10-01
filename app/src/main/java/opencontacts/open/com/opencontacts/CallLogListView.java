@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import opencontacts.open.com.opencontacts.activities.EditContactActivity;
+import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;

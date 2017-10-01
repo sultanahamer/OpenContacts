@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.FormattedName;
 import ezvcard.property.Telephone;
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 

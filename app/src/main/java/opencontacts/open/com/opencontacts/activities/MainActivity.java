@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import java.util.List;
+
+import opencontacts.open.com.opencontacts.CallLogListView;
+import opencontacts.open.com.opencontacts.CallLogLoader;
+import opencontacts.open.com.opencontacts.ContactsListView;
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 
 

@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,12 +37,12 @@
             android:name="DOMAIN_PACKAGE_NAME"
             android:value="opencontacts.open.com.opencontacts.orm" />
 
-        <activity android:name=".EditContactActivity" />
+        <activity android:name=".activities.EditContactActivity" />
         <activity
-            android:name=".ContactDetailsActivity"
+            android:name=".activities.ContactDetailsActivity"
             android:label="@string/title_activity_contact_details" />
         <activity
-            android:name=".ImportVcardActivity"
+            android:name=".activities.ImportVcardActivity"
             android:label="@string/import_activity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".PhoneStateReceiver">
+        <receiver android:name=".broadcast_recievers.PhoneStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
