@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,18 +26,19 @@ import opencontacts.open.com.opencontacts.utils.DomainUtils;
  */
 
 public class ContactsListView extends ListView {
-    List <Contact> contacts;
+    final List <Contact> contacts;
     ContactsListView thisClass = this;
     public static final String ACTION_UPDATED = "action_updated";
     Context activity;
     Contact selectedContact = null;
     ArrayAdapter<Contact> adapter;
+    Object mLock = new Object();
 
     public ContactsListView(final Activity activity) {
         super(activity);
         this.activity = activity;
         setTextFilterEnabled(true);
-        List<Contact> contacts = DomainUtils.getAllContacts();
+        contacts = DomainUtils.getAllContacts();
 
         final OnClickListener callContact = new OnClickListener() {
             @Override
@@ -60,7 +63,7 @@ public class ContactsListView extends ListView {
             }
         };
 
-        adapter = new ArrayAdapter<Contact>(ContactsListView.this.activity, R.layout.contact, contacts){
+        adapter = new ArrayAdapter<Contact>(ContactsListView.this.activity, R.layout.contact, new ArrayList<Contact>(contacts)){
             private LayoutInflater layoutInflater = LayoutInflater.from(ContactsListView.this.activity);
             @NonNull
             @Override
@@ -76,11 +79,54 @@ public class ContactsListView extends ListView {
                 convertView.setOnClickListener(showContactDetails);
                 return convertView;
             }
+
+            @NonNull
+            @Override
+            public Filter getFilter() {
+                return new Filter() {
+                    @Override
+                    protected synchronized FilterResults  performFiltering(CharSequence constraint) {
+                        FilterResults results = new FilterResults();
+                        System.out.println(constraint + ", "+ contacts.size());
+                        if(constraint == null || constraint.length() == 0){
+                            results.values = contacts;
+                            results.count = contacts.size();
+                        }
+                        else {
+                            ArrayList<Contact> filteredContacts = new ArrayList<>();
+                            filteredContacts.addAll(contacts);
+                            for (Contact c : contacts) {
+                                System.out.println(c.toString());
+                                if (!c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
+                                    filteredContacts.remove(c);
+                                }
+                            }
+                            results.values = filteredContacts;
+                            results.count = filteredContacts.size();
+                        }
+
+                        return results;
+                    }
+
+                    @Override
+                    protected synchronized void publishResults(CharSequence constraint, FilterResults results) {
+                        adapter.clear();
+                        if (constraint == null || constraint.length() == 0) {
+                            addAllContactsToAdapter(contacts);
+                        }
+                        else
+                            addAllContactsToAdapter((List<Contact>) results.values);
+                        notifyDataSetChanged();
+                    }
+                };
+            }
         };
         sortContacts();
         this.setAdapter(adapter);
     }
-
+    private synchronized void addAllContactsToAdapter(List<Contact> contactsList){
+        adapter.addAll(contactsList);
+    }
     private void sortContacts() {
         adapter.sort(new Comparator<Contact>() {
             @Override
