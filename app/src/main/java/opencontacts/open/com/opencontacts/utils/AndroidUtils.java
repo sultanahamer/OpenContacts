@@ -1,9 +1,14 @@
 package opencontacts.open.com.opencontacts.utils;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -27,10 +32,23 @@ public class AndroidUtils {
             imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
-    public static void call(String number, Context context){
+
+    public static void call(String number, Context context) {
         Uri numberUri = Uri.parse("tel:" + number);
-        Intent callIntent = new Intent(Intent.ACTION_DIAL, numberUri);
-        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            Intent dialIntent = new Intent(Intent.ACTION_DIAL, numberUri);
+            dialIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(dialIntent);
+            return;
+        }
+        Intent callIntent = new Intent(Intent.ACTION_CALL, numberUri);
         context.startActivity(callIntent);
     }
 
@@ -45,5 +63,19 @@ public class AndroidUtils {
     }
     public static SharedPreferences getAppsSharedPreferences(Context context){
         return context.getSharedPreferences(context.getString(R.string.app_name), context.MODE_PRIVATE);
+    }
+
+    public static void showAlert(Context context, String title, String message){
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Okay", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
