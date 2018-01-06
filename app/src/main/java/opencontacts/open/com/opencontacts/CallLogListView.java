@@ -102,6 +102,7 @@ public class CallLogListView extends ListView {
                 View addButton = reusableView.findViewById(R.id.image_button_add_contact);
                 if(callLogEntry.getContactId() == -1){
                     addButton.setOnClickListener(addContact);
+                    addButton.setVisibility(View.VISIBLE);
                 }
                 else
                     addButton.setVisibility(View.GONE);
