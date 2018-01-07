@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
+
+import java.io.IOException;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.CallLogListView;
@@ -19,6 +21,7 @@ import opencontacts.open.com.opencontacts.ContactsListView;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
+import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
 public class MainActivity extends Activity implements TextWatcher {
@@ -82,6 +85,18 @@ public class MainActivity extends Activity implements TextWatcher {
             }
         });
 
+        final ImageButton exportToVCardFileButton = (ImageButton) findViewById(R.id.image_button_export_to_vcard_file);
+        exportToVCardFileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    DomainUtils.exportAllContacts(MainActivity.this);
+                } catch (IOException e) {
+                    AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
+                }
+            }
+        });
+
         if(contactsListView == null)
             contactsListView = new ContactsListView(this);
         contacts_holder_layout.addView(contactsListView);
@@ -139,7 +154,7 @@ public class MainActivity extends Activity implements TextWatcher {
         toolbar.setTitle("");
         searchBar.setVisibility(View.VISIBLE);
         stopSearch.setVisibility(View.VISIBLE);
-        AndroidUtils.showSoftKeyboard(searchBar, getBaseContext());
+        AndroidUtils.showSoftKeyboard(searchBar, MainActivity.this);
     }
 
     @Override

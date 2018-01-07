@@ -1,9 +1,24 @@
 package opencontacts.open.com.opencontacts.utils;
 
+import android.content.Context;
+import android.os.Environment;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import ezvcard.VCard;
+import ezvcard.VCardVersion;
+import ezvcard.io.text.VCardWriter;
+import ezvcard.parameter.TelephoneType;
+import ezvcard.property.StructuredName;
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 
@@ -50,5 +65,39 @@ public class DomainUtils {
         if(contact == null)
             return null;
         return createNewDomainContact(contact);
+    }
+
+    public static void exportAllContacts(Context context) throws IOException {
+        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            AndroidUtils.showAlert(context, "Error", "Storage is not mounted");
+            return;
+        }
+        File path = Environment.getExternalStorageDirectory();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy hh-mm-ss");
+        File file = new File(path, "Contacts_" + simpleDateFormat.format(new Date()) + " .vcf");
+        file.createNewFile();
+        List<Contact> allContacts = getAllContacts();
+        VCardWriter vCardWriter = null;
+        try{
+            vCardWriter = new VCardWriter(new FileOutputStream(file), VCardVersion.V4_0);
+
+            StructuredName structuredName = new StructuredName();
+
+            for( Contact contact : allContacts){
+                VCard vcard = new VCard();
+                structuredName.setGiven(contact.getFirstName());
+                structuredName.setFamily(contact.getLastName());
+                vcard.setStructuredName(structuredName);
+                for(String phoneNumber : contact.getPhoneNumbers())
+                    vcard.addTelephoneNumber(phoneNumber, TelephoneType.CELL);
+                vCardWriter.write(vcard);
+            }
+            Toast.makeText(context, R.string.exporting_contacts_complete, Toast.LENGTH_LONG).show();
+        }
+        finally {
+            if(vCardWriter != null)
+                vCardWriter.close();
+        }
+
     }
 }

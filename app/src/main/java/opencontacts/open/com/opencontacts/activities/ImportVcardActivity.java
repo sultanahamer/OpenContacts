@@ -18,7 +18,7 @@ import java.util.List;
 
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
-import ezvcard.property.FormattedName;
+import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.Contact;
@@ -55,14 +55,13 @@ public class ImportVcardActivity extends AppCompatActivity {
                 InputStream vcardInputStream = context.getContentResolver().openInputStream(uri);
                 List<VCard> vCards = Ezvcard.parse(vcardInputStream).all();
                 publishProgress(PROGRESS_TOTAL_NUMBER_OF_VCARDS, vCards.size());
-                int numberOfvCardsImported=0, numberOfCardsIgnored = 0;
+                int numberOfvCardsImported = 0, numberOfCardsIgnored = 0;
                 for(VCard vcard : vCards){
-                    FormattedName name = vcard.getFormattedName();
-                    if(name == null){
+                    if(vcard.getFormattedName() == null){
                         numberOfCardsIgnored++;
                         continue;
                     }
-                    save(name.getValue(), vcard.getTelephoneNumbers());
+                    save(vcard.getStructuredName(), vcard.getTelephoneNumbers());
                     numberOfvCardsImported++;
                     publishProgress(PROGRESS_NUMBER_OF_VCARDS_PROCESSED_UNTIL_NOW, numberOfvCardsImported, numberOfCardsIgnored);
                     Thread.sleep(100);
@@ -81,8 +80,17 @@ public class ImportVcardActivity extends AppCompatActivity {
             }
             return null;
         }
-        private void save(String firstName, List<Telephone> telephoneNumbers){
-            Contact contact = new Contact(firstName, "");
+
+        private void save(StructuredName structuredName, List<Telephone> telephoneNumbers){
+            List<String> additionalNames = structuredName.getAdditionalNames();
+            String lastName = structuredName.getFamily();
+            if(additionalNames.size() > 0){
+                StringBuffer nameBuffer = new StringBuffer();
+                for(String additionalName : additionalNames)
+                    nameBuffer.append(additionalName).append(" ");
+                lastName = nameBuffer.append(structuredName.getFamily()).toString();
+            }
+            Contact contact = new Contact(structuredName.getGiven(), lastName);
             contact.save();
             for(Telephone telephoneNumber : telephoneNumbers){
                 new PhoneNumber(telephoneNumber.getText(), contact).save();

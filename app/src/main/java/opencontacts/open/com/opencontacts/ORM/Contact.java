@@ -18,6 +18,10 @@ public class Contact extends SugarRecord implements Serializable{
     }
 
     public Contact(String firstName, String lastName){
+        if(lastName == null)
+            lastName = "";
+        if(firstName == null)
+            firstName = lastName;
         this.firstName = firstName;
         this.lastName = lastName;
     }

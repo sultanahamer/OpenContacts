@@ -72,6 +72,10 @@ public class Contact implements Serializable{
         return phoneNumbers;
     }
 
+    public void addPhoneNumber(String phoneNumber){
+        phoneNumbers.add(phoneNumber);
+    }
+
     public void setPhoneNumbers(List<String> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
