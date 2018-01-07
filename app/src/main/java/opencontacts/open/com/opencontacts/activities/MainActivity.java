@@ -2,6 +2,7 @@ package opencontacts.open.com.opencontacts.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -40,7 +41,8 @@ public class MainActivity extends Activity implements TextWatcher {
     @Override
     protected void onResume() {
         super.onResume();
-        refresh();
+        if(callLogListView != null)
+            refresh();
     }
 
     @Override
@@ -52,16 +54,22 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private void refresh(){
-        List<CallLogEntry> newCallLogEntries = callLogLoader.loadCallLog(MainActivity.this);
-        if(newCallLogEntries == null)
-            return;
-        callLogListView.addNewEntries(newCallLogEntries);
-    }
-    private void fillCallLogTab() {
-        LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
-        new CallLogLoader().loadCallLog(this);
-        callLogListView = new CallLogListView(this);
-        call_logs_holder_layout.addView(callLogListView);
+        new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                return callLogLoader.loadCallLog(MainActivity.this);
+            }
+
+            @Override
+            protected void onPostExecute(Object callLogEntries) {
+                super.onPostExecute(callLogEntries);
+                List<CallLogEntry> listCallLogEntries = (List<CallLogEntry>) callLogEntries;
+                if(listCallLogEntries == null || listCallLogEntries.size() == 0)
+                    return;
+                callLogListView.addNewEntries(listCallLogEntries);
+            }
+        }.execute(new Object());
+
     }
 
     private void fillContactsTab() {
@@ -118,8 +126,27 @@ public class MainActivity extends Activity implements TextWatcher {
         spec.setIndicator("Contacts");
         tabHost.addTab(spec);
 
-        fillContactsTab();
-        fillCallLogTab();
+        new AsyncTask() {
+            String callLogLoaded = "call log loaded";
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                callLogLoader.loadCallLog(MainActivity.this);
+                callLogListView = new CallLogListView(MainActivity.this);
+                publishProgress(callLogLoaded);
+                fillContactsTab();
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Object[] values) {
+                super.onProgressUpdate(values);
+                if(values[0].toString().equals(callLogLoaded)){
+                    LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
+                    call_logs_holder_layout.addView(callLogListView);
+                }
+            }
+        }.execute(new Object());
     }
 
     @Override
