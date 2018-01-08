@@ -73,7 +73,6 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private void fillContactsTab() {
-        LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.contacts_holder);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         searchBar = (EditText) findViewById(R.id.text_edit_search_box);
@@ -107,7 +106,6 @@ public class MainActivity extends Activity implements TextWatcher {
 
         if(contactsListView == null)
             contactsListView = new ContactsListView(this);
-        contacts_holder_layout.addView(contactsListView);
     }
 
     private void setupTabs() {
@@ -128,6 +126,8 @@ public class MainActivity extends Activity implements TextWatcher {
 
         new AsyncTask() {
             String callLogLoaded = "call log loaded";
+            String contactsLoaded = "contacts loaded";
+
 
             @Override
             protected Object doInBackground(Object[] params) {
@@ -135,6 +135,7 @@ public class MainActivity extends Activity implements TextWatcher {
                 callLogListView = new CallLogListView(MainActivity.this);
                 publishProgress(callLogLoaded);
                 fillContactsTab();
+                publishProgress(contactsLoaded);
                 return null;
             }
 
@@ -144,6 +145,13 @@ public class MainActivity extends Activity implements TextWatcher {
                 if(values[0].toString().equals(callLogLoaded)){
                     LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
                     call_logs_holder_layout.addView(callLogListView);
+                }
+
+                if(values[0].toString().equals(contactsLoaded)) {
+                    LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.contacts_holder);
+                    contacts_holder_layout.addView(contactsListView);
+                    findViewById(R.id.button_search).setVisibility(View.VISIBLE);
+                    findViewById(R.id.image_button_export_to_vcard_file).setVisibility(View.VISIBLE);
                 }
             }
         }.execute(new Object());
