@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,7 +40,12 @@ public class ContactsListView extends ListView {
         this.activity = activity;
         setTextFilterEnabled(true);
         contacts = DomainUtils.getAllContacts();
-
+        Collections.sort(contacts, new Comparator<Contact>() {
+            @Override
+            public int compare(Contact contact1, Contact contact2) {
+                return contact1.getName().compareToIgnoreCase(contact2.getName());
+            }
+        });
         final OnClickListener callContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,20 +127,11 @@ public class ContactsListView extends ListView {
                 };
             }
         };
-        sortContacts();
         this.setAdapter(adapter);
     }
     private synchronized void addAllContactsToAdapter(List<Contact> contactsList){
         for(Contact contact : contactsList)
             adapter.add(contact);
-    }
-    private void sortContacts() {
-        adapter.sort(new Comparator<Contact>() {
-            @Override
-            public int compare(Contact contact1, Contact contact2) {
-                return contact1.getName().compareToIgnoreCase(contact2.getName());
-            }
-        });
     }
 
     public void updateContactViewAt(int position, long contactId) {
@@ -157,7 +154,6 @@ public class ContactsListView extends ListView {
         Contact newContact = DomainUtils.getContact(newContactId);
         adapter.add(newContact);
         contacts.add(newContact);
-        sortContacts();
         adapter.notifyDataSetChanged();
     }
 
