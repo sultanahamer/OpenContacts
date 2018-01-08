@@ -1,9 +1,11 @@
 package opencontacts.open.com.opencontacts.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -96,11 +98,18 @@ public class MainActivity extends Activity implements TextWatcher {
         exportToVCardFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    DomainUtils.exportAllContacts(MainActivity.this);
-                } catch (IOException e) {
-                    AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
-                }
+                new AlertDialog.Builder(MainActivity.this)
+                    .setMessage("Do you want to export?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                DomainUtils.exportAllContacts(MainActivity.this);
+                            } catch (IOException e) {
+                                AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
+                            }
+                        }
+                    }).setNegativeButton("No", null).show();
             }
         });
 
