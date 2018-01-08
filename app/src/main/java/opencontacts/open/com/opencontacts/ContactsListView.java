@@ -125,7 +125,8 @@ public class ContactsListView extends ListView {
         this.setAdapter(adapter);
     }
     private synchronized void addAllContactsToAdapter(List<Contact> contactsList){
-        adapter.addAll(contactsList);
+        for(Contact contact : contactsList)
+            adapter.add(contact);
     }
     private void sortContacts() {
         adapter.sort(new Comparator<Contact>() {
@@ -153,13 +154,17 @@ public class ContactsListView extends ListView {
     }
 
     public void addNewContactInView(long newContactId) {
-        adapter.add(DomainUtils.getContact(newContactId));
+        Contact newContact = DomainUtils.getContact(newContactId);
+        adapter.add(newContact);
+        contacts.add(newContact);
         sortContacts();
         adapter.notifyDataSetChanged();
     }
 
     public  void deleteContactViewAt(int position){
-        adapter.remove(adapter.getItem(position));
+        Contact contact = adapter.getItem(position);
+        adapter.remove(contact);
+        contacts.remove(contact);
         adapter.notifyDataSetChanged();
     }
 
