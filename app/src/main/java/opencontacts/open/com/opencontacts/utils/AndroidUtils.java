@@ -44,11 +44,12 @@ public class AndroidUtils {
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             Intent dialIntent = new Intent(Intent.ACTION_DIAL, numberUri);
-            dialIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dialIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(dialIntent);
             return;
         }
         Intent callIntent = new Intent(Intent.ACTION_CALL, numberUri);
+        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(callIntent);
     }
 
