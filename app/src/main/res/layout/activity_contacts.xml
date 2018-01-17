@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,56 +9,6 @@
     tools:context="opencontacts.open.com.opencontacts.activities.MainActivity"
     android:orientation="vertical">
 
-
-
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:theme="?attr/actionBarTheme"
-        android:minHeight="?attr/actionBarSize"
-        android:id="@+id/toolbar"
-        android:layout_weight="0.30">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:text=""
-            android:ems="10"
-            android:visibility="gone"
-            android:id="@+id/text_edit_search_box"
-            android:layout_weight="0.30" />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:background="@null"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:src="@android:drawable/btn_dialog"
-            android:id="@+id/image_button_stop_search"
-            android:layout_weight="0.30" />
-        <ImageButton
-            android:background="@null"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_menu_search"
-            android:src="@android:drawable/ic_menu_search"
-            android:layout_marginRight="16dp"
-            android:id="@+id/button_search"
-             />
-        <ImageButton
-            android:background="@null"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_menu_directions"
-            android:src="@android:drawable/ic_menu_directions"
-            android:id="@+id/image_button_export_to_vcard_file"
-            android:layout_marginRight="16dp" />
-    </android.support.v7.widget.Toolbar>
 
 
     <LinearLayout
@@ -74,14 +23,11 @@
         android:layout_height="wrap_content"></LinearLayout>
 
     <ImageButton
-        android:text="@string/button_new"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/ic_add_black_24dp"
         android:layout_weight="1"
-        android:onClick="addContact"
         android:id="@+id/button_new"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

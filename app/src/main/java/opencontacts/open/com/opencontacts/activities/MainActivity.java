@@ -52,6 +52,16 @@ public class MainActivity extends Activity implements TextWatcher {
         super.onCreate(savedInstanceState);
         callLogLoader = new CallLogLoader();
         setContentView(R.layout.activity_tabbed);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+        findViewById(R.id.button_new).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addContact = new Intent(MainActivity.this, EditContactActivity.class);
+                addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
+                startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
+            }
+        });
         setupTabs();
     }
 
@@ -75,8 +85,6 @@ public class MainActivity extends Activity implements TextWatcher {
     }
 
     private void fillContactsTab() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
         searchBar = (EditText) findViewById(R.id.text_edit_search_box);
         searchBar.addTextChangedListener(this);
         stopSearch = (ImageButton) findViewById(R.id.image_button_stop_search);
@@ -90,7 +98,11 @@ public class MainActivity extends Activity implements TextWatcher {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchContact(v);
+                tabHost.setCurrentTab(1);
+                toolbar.setTitle("");
+                searchBar.setVisibility(View.VISIBLE);
+                stopSearch.setVisibility(View.VISIBLE);
+                AndroidUtils.showSoftKeyboard(searchBar, MainActivity.this);
             }
         });
 
@@ -188,18 +200,6 @@ public class MainActivity extends Activity implements TextWatcher {
         super.onStart();
     }
 
-    public void addContact(View view) {
-        Intent addContact = new Intent(this, EditContactActivity.class);
-        addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
-        startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
-    }
-
-    public void searchContact(View view) {
-        toolbar.setTitle("");
-        searchBar.setVisibility(View.VISIBLE);
-        stopSearch.setVisibility(View.VISIBLE);
-        AndroidUtils.showSoftKeyboard(searchBar, MainActivity.this);
-    }
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {

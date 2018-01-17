@@ -93,7 +93,6 @@ public class ContactsListView extends ListView {
                     @Override
                     protected synchronized FilterResults  performFiltering(CharSequence constraint) {
                         FilterResults results = new FilterResults();
-                        System.out.println(constraint + ", "+ contacts.size());
                         if(constraint == null || constraint.length() == 0){
                             results.values = contacts;
                             results.count = contacts.size();
@@ -102,7 +101,6 @@ public class ContactsListView extends ListView {
                             ArrayList<Contact> filteredContacts = new ArrayList<>();
                             filteredContacts.addAll(contacts);
                             for (Contact c : contacts) {
-                                System.out.println(c.toString());
                                 if (!c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
                                     filteredContacts.remove(c);
                                 }
