@@ -73,13 +73,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:weightSum="10"
+            android:weightSum="16"
             android:orientation="vertical">
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:layout_height="match_parent">
 
                 <include
@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
-                android:layout_weight="9"
+                android:layout_weight="14"
                 android:orientation="horizontal"
                 />
 
