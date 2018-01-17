@@ -217,6 +217,7 @@ public class MainActivity extends Activity implements TextWatcher {
 
     public void stopSearch(View view) {
         contactsListView.clearTextFilter();
+        searchBar.setText("");
         searchBar.setVisibility(View.GONE);
         stopSearch.setVisibility(View.GONE);
         toolbar.setTitle(R.string.app_name);
