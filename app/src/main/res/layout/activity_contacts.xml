@@ -1,35 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:layout_weight="15"
-    tools:context="opencontacts.open.com.opencontacts.activities.MainActivity"
-    android:orientation="vertical">
-
-
-
-    <LinearLayout
-        android:id="@+id/contacts_holder"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_weight="14"
-        android:layout_height="wrap_content"></LinearLayout>
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:src="@drawable/ic_add_black_24dp"
-        android:layout_weight="1"
-        android:id="@+id/button_new"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+android:orientation="vertical" android:layout_width="match_parent"
+android:id="@+id/contacts_holder"
+android:layout_height="match_parent">
 </LinearLayout>

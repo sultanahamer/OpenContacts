@@ -169,7 +169,7 @@ public class MainActivity extends Activity implements TextWatcher {
                 }
 
                 if(values[0].toString().equals(contactsLoaded)) {
-                    LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.contacts_holder);
+                    LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.tab_contacts);
                     contacts_holder_layout.addView(contactsListView);
                     findViewById(R.id.button_search).setVisibility(View.VISIBLE);
                     findViewById(R.id.image_button_export_to_vcard_file).setVisibility(View.VISIBLE);

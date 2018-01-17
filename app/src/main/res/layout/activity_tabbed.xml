@@ -51,6 +51,16 @@
             android:src="@android:drawable/ic_menu_directions"
             android:id="@+id/image_button_export_to_vcard_file"
             android:layout_marginRight="16dp" />
+
+        <ImageButton
+            android:background="@null"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_add"
+            app:srcCompat="@android:drawable/ic_menu_add"
+            android:id="@+id/button_new"
+            android:layout_marginRight="16dp" />
     </android.support.v7.widget.Toolbar>
     <TabHost
         android:id="@+id/tab_host"
