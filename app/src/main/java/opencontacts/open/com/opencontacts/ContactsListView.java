@@ -99,10 +99,9 @@ public class ContactsListView extends ListView {
                         }
                         else {
                             ArrayList<Contact> filteredContacts = new ArrayList<>();
-                            filteredContacts.addAll(contacts);
                             for (Contact c : contacts) {
-                                if (!c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
-                                    filteredContacts.remove(c);
+                                if (c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
+                                    filteredContacts.add(c);
                                 }
                             }
                             results.values = filteredContacts;
