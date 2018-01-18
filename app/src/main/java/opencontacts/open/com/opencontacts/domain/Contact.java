@@ -16,20 +16,24 @@ public class Contact implements Serializable{
     private List<String> phoneNumbers;
     private String name;
 
-    public Contact(long id, String firstName, String lastName, List<String> phoneNumbers) {
+    private String lastAccessed;
+
+    public Contact(long id, String firstName, String lastName, List<String> phoneNumbers, String lastAccessed) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumbers = phoneNumbers;
         this.name = firstName + " " + lastName;
+        this.lastAccessed = lastAccessed;
     }
 
-    public Contact(String firstName, String lastName, List<String> phoneNumbers) {
-        this.id = -1;
+    public Contact(Long id, String firstName, String lastName, List<String> phoneNumbers, String lastAccessed) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumbers = phoneNumbers;
         this.name = firstName + " " + lastName;
+        this.lastAccessed = lastAccessed;
     }
 
     @Override
@@ -42,6 +46,12 @@ public class Contact implements Serializable{
         return searchStringBuffer.toString();
     }
 
+    public String getLastAccessed() {
+        return lastAccessed;
+    }
+    public void setLastAccessed(String lastAccessed) {
+        this.lastAccessed = lastAccessed;
+    }
     public String getPhoneNumber(){
         return phoneNumbers.get(0);
     }

@@ -104,6 +104,19 @@ public class ContactsListView extends ListView {
                                     filteredContacts.add(c);
                                 }
                             }
+                            Collections.sort(filteredContacts, new Comparator<Contact>() {
+                                @Override
+                                public int compare(Contact contact1, Contact contact2) {
+                                    String lastAccessedDate1 = contact1.getLastAccessed();
+                                    String lastAccessedDate2 = contact2.getLastAccessed();
+                                    if(lastAccessedDate1 == null)
+                                        return 1;
+                                    else if (lastAccessedDate2 == null)
+                                        return -1;
+                                    else
+                                    return lastAccessedDate2.compareTo(lastAccessedDate1);
+                                }
+                            });
                             results.values = filteredContacts;
                             results.count = filteredContacts.size();
                         }

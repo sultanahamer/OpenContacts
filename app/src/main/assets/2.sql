@@ -1,1 +1,0 @@
-alter table Call_Log_Entry add column 'sim_Id';

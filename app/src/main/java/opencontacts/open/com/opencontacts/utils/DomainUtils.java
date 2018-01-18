@@ -1,6 +1,7 @@
 package opencontacts.open.com.opencontacts.utils;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.StructuredName;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 
 /**
@@ -27,11 +29,29 @@ import opencontacts.open.com.opencontacts.orm.PhoneNumber;
  */
 
 public class DomainUtils {
+
+    public static void updateContactsAccessedDate(final List<CallLogEntry> newCallLogEntries){
+        new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] params) {
+                for(CallLogEntry callLogEntry : newCallLogEntries){
+                    long contactId = callLogEntry.getContactId();
+                    if(contactId !=-1){
+                        opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContactWithId(contactId);
+                        contact.lastAccessed = callLogEntry.getDate();
+                        contact.save();
+                    }
+                }
+                return null;
+            }
+        }.execute(new Object());
+    }
+
     public static Contact createNewDomainContact(PhoneNumber dbPhoneNumber){
         opencontacts.open.com.opencontacts.orm.Contact dbContact = dbPhoneNumber.getContact();
         ArrayList<String> phoneNumbers = new ArrayList<String>(3);
         phoneNumbers.add(dbPhoneNumber.getPhoneNumber());
-        return new Contact(dbContact.getId(), dbContact.firstName, dbContact.lastName, phoneNumbers);
+        return new Contact(dbContact.getId(), dbContact.firstName, dbContact.lastName, phoneNumbers, dbContact.lastAccessed);
     }
 
     public static List<Contact> getAllContacts(){
@@ -40,9 +60,8 @@ public class DomainUtils {
         Contact tempContact;
         for(PhoneNumber dbPhoneNumber: dbPhoneNumbers){
             tempContact = contactsMap.get(dbPhoneNumber.getContact().getId());
-            if(tempContact == null){
+            if(tempContact == null)
                 tempContact = createNewDomainContact(dbPhoneNumber);
-            }
             else
                 tempContact.getPhoneNumbers().add(dbPhoneNumber.getPhoneNumber());
             contactsMap.put(tempContact.getId(), tempContact);
@@ -52,11 +71,11 @@ public class DomainUtils {
 
     public static Contact createNewDomainContact(opencontacts.open.com.opencontacts.orm.Contact contact){
         List<PhoneNumber> dbPhoneNumbers = contact.getAllPhoneNumbers();
-        List<String> phoneNumbers = new ArrayList<String>();
+        List<String> phoneNumbers = new ArrayList<String>(3);
         for(PhoneNumber dbPhoneNumber : dbPhoneNumbers){
             phoneNumbers.add(dbPhoneNumber.getPhoneNumber());
         }
-        return new Contact(contact.getId(), contact.firstName, contact.lastName, phoneNumbers);
+        return new Contact(contact.getId(), contact.firstName, contact.lastName, phoneNumbers, contact.lastAccessed);
     }
     public static Contact getContact(long id){
         if(id == -1)

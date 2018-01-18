@@ -13,6 +13,8 @@ public class Contact extends SugarRecord implements Serializable{
 
     public String lastName;
 
+    public String lastAccessed;
+
     public Contact(){
         super();
     }

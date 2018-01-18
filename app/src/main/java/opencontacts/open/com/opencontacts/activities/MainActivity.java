@@ -79,6 +79,7 @@ public class MainActivity extends Activity implements TextWatcher {
                 if(listCallLogEntries == null || listCallLogEntries.size() == 0)
                     return;
                 callLogListView.addNewEntries(listCallLogEntries);
+                DomainUtils.updateContactsAccessedDate(listCallLogEntries);
             }
         }.execute(new Object());
 
