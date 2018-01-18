@@ -18,6 +18,7 @@ import java.util.List;
 
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
+import ezvcard.property.FormattedName;
 import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 import opencontacts.open.com.opencontacts.R;
@@ -56,15 +57,23 @@ public class ImportVcardActivity extends AppCompatActivity {
                 List<VCard> vCards = Ezvcard.parse(vcardInputStream).all();
                 publishProgress(PROGRESS_TOTAL_NUMBER_OF_VCARDS, vCards.size());
                 int numberOfvCardsImported = 0, numberOfCardsIgnored = 0;
+                StructuredName structuredName;
+                FormattedName formattedName;
                 for(VCard vcard : vCards){
-                    if(vcard.getFormattedName() == null){
-                        numberOfCardsIgnored++;
-                        continue;
-                    }
-                    save(vcard.getStructuredName(), vcard.getTelephoneNumbers());
+                    structuredName = vcard.getStructuredName();
+                    formattedName = vcard.getFormattedName();
+                    if(structuredName == null)
+                        if(formattedName == null){
+                            numberOfCardsIgnored++;
+                            continue;
+                        }
+                        else
+                            save(formattedName.getValue(), vcard.getTelephoneNumbers());
+                    else
+                        save(structuredName, vcard.getTelephoneNumbers());
                     numberOfvCardsImported++;
                     publishProgress(PROGRESS_NUMBER_OF_VCARDS_PROCESSED_UNTIL_NOW, numberOfvCardsImported, numberOfCardsIgnored);
-                    Thread.sleep(100);
+                    Thread.sleep(20);
                 }
                 publishProgress(PROGRESS_FINAL_RESULT_OF_IMPORT, numberOfvCardsImported, numberOfCardsIgnored);
             } catch (FileNotFoundException e) {
@@ -79,6 +88,14 @@ public class ImportVcardActivity extends AppCompatActivity {
                 Toast.makeText(context, R.string.unexpected_error_happened, Toast.LENGTH_LONG).show();
             }
             return null;
+        }
+
+        private void save(String firstName, List<Telephone> telephoneNumbers){
+            Contact contact = new Contact(firstName, "");
+            contact.save();
+            for(Telephone telephoneNumber : telephoneNumbers){
+                new PhoneNumber(telephoneNumber.getText(), contact).save();
+            }
         }
 
         private void save(StructuredName structuredName, List<Telephone> telephoneNumbers){
