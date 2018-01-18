@@ -109,7 +109,9 @@ public class ContactsListView extends ListView {
                                 public int compare(Contact contact1, Contact contact2) {
                                     String lastAccessedDate1 = contact1.getLastAccessed();
                                     String lastAccessedDate2 = contact2.getLastAccessed();
-                                    if(lastAccessedDate1 == null)
+                                    if(lastAccessedDate1 == null && lastAccessedDate2 == null)
+                                        return 0;
+                                    else if(lastAccessedDate1 == null)
                                         return 1;
                                     else if (lastAccessedDate2 == null)
                                         return -1;
