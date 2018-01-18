@@ -15,6 +15,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#ffffff"
             android:inputType="phone"
             android:text=""
             android:ems="10"
