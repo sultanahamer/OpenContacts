@@ -53,7 +53,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="file" />
-                <data android:mimeType="*/*" />
+                <data android:mimeType="text/*" />
                 <data android:pathPattern=".*\\.vcf" />
             </intent-filter>
         </activity>
