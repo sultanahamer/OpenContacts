@@ -1,4 +1,4 @@
-# OpenContacts
+# OpenContacts for Android
 Privacy to your contacts.
 
 This app saves contacts in its own database seperate from android contacts. This way no other app would be able to access contacts.
