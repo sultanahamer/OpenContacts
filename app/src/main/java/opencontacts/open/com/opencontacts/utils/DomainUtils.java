@@ -29,9 +29,9 @@ import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 public class DomainUtils {
 
     public static void updateContactsAccessedDate(final List<CallLogEntry> newCallLogEntries){
-        new AsyncTask() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            protected Object doInBackground(Object[] params) {
+            protected Void doInBackground(Void... params) {
                 for(CallLogEntry callLogEntry : newCallLogEntries){
                     long contactId = callLogEntry.getContactId();
                     if(contactId !=-1){
@@ -42,7 +42,7 @@ public class DomainUtils {
                 }
                 return null;
             }
-        }.execute(new Object());
+        }.execute();
     }
 
     public static Contact createNewDomainContact(PhoneNumber dbPhoneNumber){
