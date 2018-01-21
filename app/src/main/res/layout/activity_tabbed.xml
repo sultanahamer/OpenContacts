@@ -1,68 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_tabbed"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:titleTextColor="#ffffff"
-        android:background="@color/colorPrimary"
-        android:minHeight="56dp"
-        android:id="@+id/toolbar"
-        android:layout_weight="0.30">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"
-            android:inputType="phone"
-            android:text=""
-            android:ems="10"
-            android:visibility="gone"
-            android:id="@+id/text_edit_search_box"
-            android:layout_weight="0.30" />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:background="@null"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/btn_dialog"
-            android:src="@android:drawable/btn_dialog"
-            android:id="@+id/image_button_stop_search"
-            android:layout_weight="0.30" />
-        <ImageButton
-            android:background="@null"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_menu_search"
-            android:src="@android:drawable/ic_menu_search"
-            android:layout_marginRight="16dp"
-            android:id="@+id/button_search"
-            />
-        <ImageButton
-            android:background="@null"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:srcCompat="@android:drawable/ic_menu_directions"
-            android:src="@android:drawable/ic_menu_directions"
-            android:id="@+id/image_button_export_to_vcard_file"
-            android:layout_marginRight="16dp" />
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/activity_tabbed"
+    tools:context="opencontacts.open.com.opencontacts.activities.MainActivity">
 
-        <ImageButton
-            android:background="@null"
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_add"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:id="@+id/button_new"
-            android:layout_marginRight="16dp" />
-    </android.support.v7.widget.Toolbar>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+
     <TabHost
         android:id="@+id/tab_host"
         android:layout_width="match_parent"

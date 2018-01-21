@@ -1,34 +1,34 @@
 package opencontacts.open.com.opencontacts.activities;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.CallLogListView;
 import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.ContactsListView;
 import opencontacts.open.com.opencontacts.R;
+import opencontacts.open.com.opencontacts.actions.ExportActionHandler;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
-public class MainActivity extends Activity implements TextWatcher {
+public class MainActivity extends AppCompatActivity {
+    public static final int CONTACTS_TAB_INDEX = 1;
     public static int REQUESTCODE_FOR_ADD_CONTACT = 1;
     public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
     public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements TextWatcher {
     private CallLogListView callLogListView;
     private CallLogLoader callLogLoader;
     private TabHost tabHost;
+    private Menu menu;
 
     @Override
     protected void onResume() {
@@ -52,97 +53,78 @@ public class MainActivity extends Activity implements TextWatcher {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed);
-        callLogLoader = new CallLogLoader();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
-        findViewById(R.id.button_new).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addContact = new Intent(MainActivity.this, EditContactActivity.class);
-                addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
-                startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
-            }
-        });
+        setSupportActionBar(toolbar);
+        callLogLoader = new CallLogLoader();
         setupTabs();
     }
 
-    private void refresh(){
-        new AsyncTask() {
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.button_new).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            protected Object doInBackground(Object[] params) {
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent addContact = new Intent(MainActivity.this, EditContactActivity.class);
+                addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
+                startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
+                return false;
+            }
+        });
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tabHost.setCurrentTab(CONTACTS_TAB_INDEX);
+                searchView.requestFocus();
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                contactsListView.clearTextFilter();
+                return false;
+            }
+        });
+        searchView.setInputType(InputType.TYPE_CLASS_PHONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                contactsListView.setFilterText(newText);
+                return false;
+            }
+        });
+
+        menu.findItem(R.id.action_export).setOnMenuItemClickListener(new ExportActionHandler(this));
+        return super.onCreateOptionsMenu(menu);
+    }
+    private void refresh(){
+        new AsyncTask<Void, Void, List<CallLogEntry>>() {
+            @Override
+            protected List<CallLogEntry> doInBackground(Void... params) {
                 return callLogLoader.loadCallLog(MainActivity.this);
             }
 
             @Override
-            protected void onPostExecute(Object callLogEntries) {
+            protected void onPostExecute(List<CallLogEntry> callLogEntries) {
                 super.onPostExecute(callLogEntries);
-                List<CallLogEntry> listCallLogEntries = (List<CallLogEntry>) callLogEntries;
-                if(listCallLogEntries == null || listCallLogEntries.size() == 0)
+                if(callLogEntries == null || callLogEntries.size() == 0)
                     return;
-                callLogListView.addNewEntries(listCallLogEntries);
-                DomainUtils.updateContactsAccessedDate(listCallLogEntries);
+                callLogListView.addNewEntries(callLogEntries);
+                DomainUtils.updateContactsAccessedDate(callLogEntries);
             }
-        }.execute(new Object());
+        }.execute();
 
     }
 
     private void fillContactsTab() {
-        searchBar = (EditText) findViewById(R.id.text_edit_search_box);
-        searchBar.addTextChangedListener(this);
-        stopSearch = (ImageButton) findViewById(R.id.image_button_stop_search);
-        stopSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopSearch(v);
-            }
-        });
-        ImageButton searchButton = (ImageButton) findViewById(R.id.button_search);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tabHost.setCurrentTab(1);
-                toolbar.setTitle("");
-                searchBar.setVisibility(View.VISIBLE);
-                stopSearch.setVisibility(View.VISIBLE);
-                AndroidUtils.showSoftKeyboard(searchBar, MainActivity.this);
-            }
-        });
-
-        final ImageButton exportToVCardFileButton = (ImageButton) findViewById(R.id.image_button_export_to_vcard_file);
-        exportToVCardFileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(MainActivity.this)
-                    .setMessage("Do you want to export?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(MainActivity.this, R.string.exporting_contacts_started, Toast.LENGTH_SHORT).show();
-                            new AsyncTask() {
-                                @Override
-                                protected Object doInBackground(Object[] params) {
-                                    try {
-                                        DomainUtils.exportAllContacts(MainActivity.this);
-                                    } catch (IOException e) {
-                                        return false;
-                                    }
-                                    return true;
-                                }
-
-                                @Override
-                                protected void onPostExecute(Object success) {
-                                    if (Boolean.FALSE.equals(success))
-                                        AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
-                                    else
-                                        Toast.makeText(MainActivity.this, R.string.exporting_contacts_complete, Toast.LENGTH_LONG).show();
-
-                                }
-                            }.execute(new Object());
-                        }
-                    }).setNegativeButton("No", null).show();
-            }
-        });
-
         if(contactsListView == null)
             contactsListView = new ContactsListView(this);
     }
@@ -163,13 +145,12 @@ public class MainActivity extends Activity implements TextWatcher {
         spec.setIndicator("Contacts");
         tabHost.addTab(spec);
 
-        new AsyncTask() {
+        new AsyncTask<Void, String, Void>() {
             String callLogLoaded = "call log loaded";
             String contactsLoaded = "contacts loaded";
 
-
             @Override
-            protected Object doInBackground(Object[] params) {
+            protected Void doInBackground(Void... params) {
                 callLogLoader.loadCallLog(MainActivity.this);
                 callLogListView = new CallLogListView(MainActivity.this);
                 publishProgress(callLogLoaded);
@@ -179,21 +160,19 @@ public class MainActivity extends Activity implements TextWatcher {
             }
 
             @Override
-            protected void onProgressUpdate(Object[] values) {
-                super.onProgressUpdate(values);
-                if(values[0].toString().equals(callLogLoaded)){
+            protected void onProgressUpdate(String... progress) {
+                super.onProgressUpdate(progress);
+                if(callLogLoaded.equals(progress[0])){
                     LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
                     call_logs_holder_layout.addView(callLogListView);
                 }
 
-                if(values[0].toString().equals(contactsLoaded)) {
+                if(contactsLoaded.equals(progress[0])) {
                     LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.tab_contacts);
                     contacts_holder_layout.addView(contactsListView);
-                    findViewById(R.id.button_search).setVisibility(View.VISIBLE);
-                    findViewById(R.id.image_button_export_to_vcard_file).setVisibility(View.VISIBLE);
                 }
             }
-        }.execute(new Object());
+        }.execute();
     }
 
     @Override
@@ -216,28 +195,5 @@ public class MainActivity extends Activity implements TextWatcher {
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        contactsListView.setFilterText(s.toString());
-    }
-
-    public void stopSearch(View view) {
-        contactsListView.clearTextFilter();
-        searchBar.setText("");
-        searchBar.setVisibility(View.GONE);
-        stopSearch.setVisibility(View.GONE);
-        toolbar.setTitle(R.string.app_name);
     }
 }
