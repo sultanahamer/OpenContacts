@@ -1,41 +1,47 @@
 package opencontacts.open.com.opencontacts.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
 
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
+import static android.view.ViewGroup.LayoutParams.*;
+
 public class EditContactActivity extends AppCompatActivity {
     Contact contact = null;
     public static final String INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT = "add_new_contact";
     public static final String INTENT_EXTRA_CONTACT_CONTACT_DETAILS = "contact_details";
     public static final String INTENT_EXTRA_STRING_PHONE_NUMBER = "phone_number";
-    TextView textView_firstName;
-    TextView textView_lastName;
-    TextView textView_mobileNumber;
+    EditText editText_firstName;
+    EditText editText_lastName;
+    EditText editText_mobileNumber;
     private boolean addingNewContact = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
-        RelativeLayout rlayout  = (RelativeLayout) findViewById(R.id.relative_layout_contact_details);
-        textView_firstName = ((TextView)findViewById(R.id.editFirstName));
-        textView_lastName = ((TextView)findViewById(R.id.editLastName));
-        textView_mobileNumber = ((TextView)findViewById(R.id.editPhoneNumber));
+        editText_firstName = (EditText) findViewById(R.id.editFirstName);
+        editText_lastName = (EditText) findViewById(R.id.editLastName);
+        editText_mobileNumber = (EditText) findViewById(R.id.editPhoneNumber);
 
         Intent intent = getIntent();
         if(intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, false)) {
             addingNewContact = true;
-            textView_mobileNumber.setText(intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER));
+            editText_mobileNumber.setText(intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER));
         }
         else{
             contact = (Contact) intent.getSerializableExtra(INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
@@ -44,16 +50,24 @@ public class EditContactActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED);
                 finish();
             }
-            textView_firstName.setText(contact.getFirstName());
-            textView_lastName.setText(contact.getLastName());
-            textView_mobileNumber.setText(contact.getPhoneNumber());
+            editText_firstName.setText(contact.getFirstName());
+            editText_lastName.setText(contact.getLastName());
+            editText_mobileNumber.setText(contact.getPhoneNumber());
         }
 
     }
     public void saveContact(View view) {
-        String firstName = String.valueOf(textView_firstName.getText());
-        String lastName = String.valueOf(textView_lastName.getText());
-        String phoneNumber = String.valueOf(textView_mobileNumber.getText());
+        String firstName = String.valueOf(editText_firstName.getText());
+        String lastName = String.valueOf(editText_lastName.getText());
+        String phoneNumber = String.valueOf(editText_mobileNumber.getText());
+        if("".equals(firstName) && "".equals(lastName)){
+            editText_firstName.setError("Required FirstName or LastName");
+            return;
+        }
+        if("".equals(phoneNumber)){
+            editText_mobileNumber.setError("Required");
+            return;
+        }
         opencontacts.open.com.opencontacts.orm.Contact dbContact;
         if(addingNewContact)
             dbContact = addNewContact(firstName, lastName, phoneNumber);
@@ -76,6 +90,7 @@ public class EditContactActivity extends AppCompatActivity {
         if(!contact.getPhoneNumber().equals(phoneNumber)){
             ContactsDBHelper.updatePhoneNumber(dbContact, contact.getPhoneNumber(), phoneNumber);
         }
+        saveExtraPhoneNumbers(dbContact);
         return dbContact;
     }
 
@@ -85,6 +100,36 @@ public class EditContactActivity extends AppCompatActivity {
         dbContact = new opencontacts.open.com.opencontacts.orm.Contact(firstName, lastName);
         dbContact.save();
         new PhoneNumber(phoneNumber, dbContact).save();
+        saveExtraPhoneNumbers(dbContact);
         return dbContact;
     }
+
+    private void saveExtraPhoneNumbers(opencontacts.open.com.opencontacts.orm.Contact dbContact) {
+        LinearLayout phoneNumbersContainer = (LinearLayout) findViewById(R.id.phonenumbers);
+        int numberOfPhoneNumbers = phoneNumbersContainer.getChildCount();
+        String extraPhoneNumber;
+        if(numberOfPhoneNumbers > 1){
+            for(int i=1; i<numberOfPhoneNumbers; i++){
+                extraPhoneNumber = String.valueOf(((EditText) phoneNumbersContainer.getChildAt(i)).getText());
+                if("".equals(extraPhoneNumber))
+                    continue;
+                new PhoneNumber(extraPhoneNumber, dbContact).save();
+            }
+        }
+    }
+
+    public void addOneMorePhoneNumberView(View view){
+        LinearLayout phoneNumbers_linearLayout = (LinearLayout) findViewById(R.id.phonenumbers);
+        EditText oneMorePhoneNumberField = new EditText(this);
+        oneMorePhoneNumberField.setLayoutParams(new ActionBar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        oneMorePhoneNumberField.setInputType(InputType.TYPE_CLASS_PHONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            oneMorePhoneNumberField.setBackground(findViewById(R.id.editPhoneNumber).getBackground());
+        }
+        else
+            oneMorePhoneNumberField.setBackgroundDrawable(findViewById(R.id.editPhoneNumber).getBackground());
+        oneMorePhoneNumberField.setHint("Phone Number");
+        phoneNumbers_linearLayout.addView(oneMorePhoneNumberField);
+    }
+
 }

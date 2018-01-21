@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <ScrollView android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
@@ -17,17 +20,6 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             tools:context="opencontacts.open.com.opencontacts.activities.EditContactActivity">
 
-            <TextView
-                android:text="FirstName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="12dp"
-                android:layout_marginStart="12dp"
-                android:id="@+id/firstName" />
-
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,53 +27,48 @@
                 android:ems="10"
                 android:layout_marginTop="21dp"
                 android:id="@+id/editFirstName"
-                android:layout_below="@+id/firstName"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:hint="FirstName" />
-
-            <TextView
-                android:text="LastName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
-                android:id="@+id/lastName"
-                android:layout_below="@+id/editFirstName"
-                android:layout_alignRight="@+id/firstName"
-                android:layout_alignEnd="@+id/firstName" />
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:ems="10"
-                android:layout_below="@+id/lastName"
+                android:layout_below="@+id/editFirstName"
                 android:layout_alignRight="@+id/editFirstName"
                 android:layout_alignEnd="@+id/editFirstName"
-                android:layout_marginTop="34dp"
+                android:layout_marginTop="21dp"
                 android:id="@+id/editLastName"
                 android:hint="LastName" />
 
-            <TextView
-                android:text="PhoneNumber"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
-                android:id="@+id/phone_number"
-                android:layout_below="@+id/editLastName" />
-
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:ems="10"
-                android:layout_marginTop="62dp"
-                android:id="@+id/editPhoneNumber"
-                android:hint="Phone Number"
+                android:layout_marginTop="21dp"
+                android:id="@+id/phonenumbers"
                 android:layout_below="@+id/editLastName"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:orientation="vertical">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:id="@+id/editPhoneNumber"
+                    android:hint="Phone Number" />
+            </LinearLayout>
+
+            <Button
+                android:text="Add more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_more"
+                android:onClick="addOneMorePhoneNumberView"
+                android:layout_below="@id/phonenumbers"
+                android:layout_marginTop="21dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
         </RelativeLayout>
     </ScrollView>
     <ImageButton
@@ -97,7 +84,6 @@
         android:layout_marginBottom="22dp"
         android:onClick="saveContact"
         android:id="@+id/image_button_save" />
-
 </RelativeLayout>
 
 
