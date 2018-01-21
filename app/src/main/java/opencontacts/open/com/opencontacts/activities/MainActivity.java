@@ -117,6 +117,7 @@ public class MainActivity extends Activity implements TextWatcher {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(MainActivity.this, R.string.exporting_contacts_started, Toast.LENGTH_SHORT).show();
                             new AsyncTask() {
                                 @Override
                                 protected Object doInBackground(Object[] params) {
