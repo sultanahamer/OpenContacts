@@ -22,6 +22,7 @@ public class EditContactActivity extends AppCompatActivity {
     TextView textView_firstName;
     TextView textView_lastName;
     TextView textView_mobileNumber;
+    private boolean addingNewContact = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +33,11 @@ public class EditContactActivity extends AppCompatActivity {
         textView_mobileNumber = ((TextView)findViewById(R.id.editPhoneNumber));
 
         Intent intent = getIntent();
-        if(!intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, false)) {
+        if(intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, false)) {
+            addingNewContact = true;
+            textView_mobileNumber.setText(intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER));
+        }
+        else{
             contact = (Contact) intent.getSerializableExtra(INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
             if(contact.getId() == -1){
                 Toast.makeText(this, R.string.error_while_loading_contact, Toast.LENGTH_LONG).show();
@@ -43,10 +48,6 @@ public class EditContactActivity extends AppCompatActivity {
             textView_lastName.setText(contact.getLastName());
             textView_mobileNumber.setText(contact.getPhoneNumber());
         }
-        else{
-            String mobileNumber = intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER);
-            textView_mobileNumber.setText(mobileNumber);
-        }
 
     }
     public void saveContact(View view) {
@@ -54,7 +55,7 @@ public class EditContactActivity extends AppCompatActivity {
         String lastName = String.valueOf(textView_lastName.getText());
         String phoneNumber = String.valueOf(textView_mobileNumber.getText());
         opencontacts.open.com.opencontacts.orm.Contact dbContact;
-        if(contact == null)
+        if(addingNewContact)
             dbContact = addNewContact(firstName, lastName, phoneNumber);
         else
             dbContact = updateExistingContact(firstName, lastName, phoneNumber);
