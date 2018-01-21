@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -34,7 +35,14 @@ public class AndroidUtils {
     }
 
     public static void call(String number, Context context) {
+        Intent callIntent = getCallIntent(number, context);
+        context.startActivity(callIntent);
+    }
+
+    @NonNull
+    public static Intent getCallIntent(String number, Context context) {
         Uri numberUri = Uri.parse("tel:" + number);
+        Intent callIntent;
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -43,18 +51,22 @@ public class AndroidUtils {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            Intent dialIntent = new Intent(Intent.ACTION_DIAL, numberUri);
-            dialIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(dialIntent);
-            return;
+            callIntent = new Intent(Intent.ACTION_DIAL, numberUri);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        Intent callIntent = new Intent(Intent.ACTION_CALL, numberUri);
-        callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(callIntent);
+        else{
+            callIntent = new Intent(Intent.ACTION_CALL, numberUri);
+            callIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        return callIntent;
     }
 
     public static void message(String number, Context context){
-        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        context.startActivity(getMessageIntent(number));
+    }
+
+    public static Intent getMessageIntent(String number) {
+        return new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     public static Intent getIntentToShowContactDetails(Contact selectedContact, Context context){

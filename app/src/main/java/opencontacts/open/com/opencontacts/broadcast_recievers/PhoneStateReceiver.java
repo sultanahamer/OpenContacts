@@ -1,9 +1,14 @@
 package opencontacts.open.com.opencontacts.broadcast_recievers;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.provider.CallLog;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,8 +16,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.Random;
+
+import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.R;
+import opencontacts.open.com.opencontacts.activities.MainActivity;
+import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.Contact;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 /**
@@ -20,22 +31,56 @@ import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
  */
 public class PhoneStateReceiver extends BroadcastReceiver {
     private static View drawOverIncomingCallLayout = null;
+    private static boolean isCallRecieved;
+    private static Contact callingContact;
+    private static String incomingNumber;
+    public static String unknown = "Unknown";
+
+
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
         if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
-            String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            Contact callingContact = ContactsDBHelper.getContact(incomingNumber);
+            isCallRecieved = false;
+            incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
+            callingContact = ContactsDBHelper.getContact(incomingNumber);
             if(callingContact == null)
-                drawContactID(context, new Contact("Unknown", ""));
-            else
-                drawContactID(context, callingContact);
+                callingContact = new Contact(unknown, incomingNumber);
+            drawContactID(context, callingContact);
         }
         else if(state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)){
             removeCallerIdDrawing(context);
+            isCallRecieved = true;
         }
         else if(state.equals(TelephonyManager.EXTRA_STATE_IDLE)){
             removeCallerIdDrawing(context);
+            new Handler().postDelayed(new Runnable() {// give android some time to write call log
+                @Override
+                public void run() {
+                    try{
+                        if(isCallRecieved)
+                            return;
+                        CallLogEntry callLogEntry = new CallLogLoader().loadCallLog(context).get(0);
+                        if(!callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.MISSED_TYPE)))
+                            return;
+                    }
+                    catch (Exception e){}
+                    PendingIntent pendingIntentToLaunchApp = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntentToCall = PendingIntent.getActivity(context, 0, AndroidUtils.getCallIntent(incomingNumber, context), PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pendingIntentToMessage = PendingIntent.getActivity(context, 0, AndroidUtils.getMessageIntent(incomingNumber), PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(context)
+                                    .setSmallIcon(R.drawable.ic_phone_missed_black_24dp)
+                                    .setContentTitle("Missed Call")
+                                    .setTicker("missed call from " + callingContact.firstName + " " + callingContact.lastName)
+                                    .setContentText(callingContact.firstName + " " + callingContact.lastName)
+                                    .addAction(R.drawable.ic_call_black_24dp, "Call", pendingIntentToCall)
+                                    .addAction(R.drawable.ic_chat_black_24dp, "Message", pendingIntentToMessage)
+                                    .setContentIntent(pendingIntentToLaunchApp);
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(new Random().nextInt(), mBuilder.build());
+                }
+            }, 3000);
         }
     }
 
