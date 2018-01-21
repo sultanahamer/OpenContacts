@@ -2,6 +2,7 @@ package opencontacts.open.com.opencontacts.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -53,25 +54,36 @@ public class EditContactActivity extends AppCompatActivity {
         String lastName = String.valueOf(textView_lastName.getText());
         String phoneNumber = String.valueOf(textView_mobileNumber.getText());
         opencontacts.open.com.opencontacts.orm.Contact dbContact;
-        if(contact == null){
-            dbContact = new opencontacts.open.com.opencontacts.orm.Contact(firstName, lastName);
-            dbContact.save();
-            new PhoneNumber(phoneNumber, dbContact).save();
-        }
+        if(contact == null)
+            dbContact = addNewContact(firstName, lastName, phoneNumber);
         else
-        {
-            dbContact = ContactsDBHelper.getContactWithId(contact.getId());
-            dbContact.firstName = firstName;
-            dbContact.lastName = lastName;
-            dbContact.save();
-            if(!contact.getPhoneNumber().equals(phoneNumber)){
-                ContactsDBHelper.updatePhoneNumber(dbContact, contact.getPhoneNumber(), phoneNumber);
-            }
-        }
+            dbContact = updateExistingContact(firstName, lastName, phoneNumber);
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
         Intent result = new Intent();
         result.putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, dbContact.getId());
         setResult(RESULT_OK, result);
         finish();
+    }
+
+    @NonNull
+    private opencontacts.open.com.opencontacts.orm.Contact updateExistingContact(String firstName, String lastName, String phoneNumber) {
+        opencontacts.open.com.opencontacts.orm.Contact dbContact;
+        dbContact = ContactsDBHelper.getContactWithId(contact.getId());
+        dbContact.firstName = firstName;
+        dbContact.lastName = lastName;
+        dbContact.save();
+        if(!contact.getPhoneNumber().equals(phoneNumber)){
+            ContactsDBHelper.updatePhoneNumber(dbContact, contact.getPhoneNumber(), phoneNumber);
+        }
+        return dbContact;
+    }
+
+    @NonNull
+    private opencontacts.open.com.opencontacts.orm.Contact addNewContact(String firstName, String lastName, String phoneNumber) {
+        opencontacts.open.com.opencontacts.orm.Contact dbContact;
+        dbContact = new opencontacts.open.com.opencontacts.orm.Contact(firstName, lastName);
+        dbContact.save();
+        new PhoneNumber(phoneNumber, dbContact).save();
+        return dbContact;
     }
 }
