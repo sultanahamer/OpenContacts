@@ -10,13 +10,15 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
-import opencontacts.open.com.opencontacts.orm.PhoneNumber;
 import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 import static android.view.ViewGroup.LayoutParams.*;
@@ -50,12 +52,22 @@ public class EditContactActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED);
                 finish();
             }
-            editText_firstName.setText(contact.getFirstName());
-            editText_lastName.setText(contact.getLastName());
-            editText_mobileNumber.setText(contact.getPhoneNumber());
+            fillFieldsFromContactDetails();
         }
 
     }
+
+    private void fillFieldsFromContactDetails() {
+        editText_firstName.setText(contact.getFirstName());
+        editText_lastName.setText(contact.getLastName());
+        editText_mobileNumber.setText(contact.getPhoneNumber());
+        List<String> phoneNumbers = contact.getPhoneNumbers();
+        if(phoneNumbers.size() > 1)
+            for(int i = 1, totalNumbers = phoneNumbers.size(); i < totalNumbers; i++){
+                addOneMorePhoneNumberView(null).setText(phoneNumbers.get(i));
+            }
+    }
+
     public void saveContact(View view) {
         String firstName = String.valueOf(editText_firstName.getText());
         String lastName = String.valueOf(editText_lastName.getText());
@@ -87,10 +99,7 @@ public class EditContactActivity extends AppCompatActivity {
         dbContact.firstName = firstName;
         dbContact.lastName = lastName;
         dbContact.save();
-        if(!contact.getPhoneNumber().equals(phoneNumber)){
-            ContactsDBHelper.updatePhoneNumber(dbContact, contact.getPhoneNumber(), phoneNumber);
-        }
-        saveExtraPhoneNumbers(dbContact);
+        savePhoneNumbers(dbContact);
         return dbContact;
     }
 
@@ -99,26 +108,30 @@ public class EditContactActivity extends AppCompatActivity {
         opencontacts.open.com.opencontacts.orm.Contact dbContact;
         dbContact = new opencontacts.open.com.opencontacts.orm.Contact(firstName, lastName);
         dbContact.save();
-        new PhoneNumber(phoneNumber, dbContact).save();
-        saveExtraPhoneNumbers(dbContact);
+        savePhoneNumbers(dbContact);
         return dbContact;
     }
 
-    private void saveExtraPhoneNumbers(opencontacts.open.com.opencontacts.orm.Contact dbContact) {
+    private void savePhoneNumbers(opencontacts.open.com.opencontacts.orm.Contact dbContact) {
         LinearLayout phoneNumbersContainer = (LinearLayout) findViewById(R.id.phonenumbers);
         int numberOfPhoneNumbers = phoneNumbersContainer.getChildCount();
         String extraPhoneNumber;
         if(numberOfPhoneNumbers > 1){
-            for(int i=1; i<numberOfPhoneNumbers; i++){
+            ArrayList<String> phoneNumbers = new ArrayList(numberOfPhoneNumbers);
+            for(int i=0; i<numberOfPhoneNumbers; i++){
                 extraPhoneNumber = String.valueOf(((EditText) phoneNumbersContainer.getChildAt(i)).getText());
                 if("".equals(extraPhoneNumber))
                     continue;
-                new PhoneNumber(extraPhoneNumber, dbContact).save();
+                else
+                    phoneNumbers.add(extraPhoneNumber);
             }
+            ContactsDBHelper.replacePhoneNumbers(dbContact, phoneNumbers);
         }
+        else
+            ContactsDBHelper.replacePhoneNumbers(dbContact, Arrays.asList(String.valueOf(editText_mobileNumber.getText())));
     }
 
-    public void addOneMorePhoneNumberView(View view){
+    public EditText addOneMorePhoneNumberView(View view){
         LinearLayout phoneNumbers_linearLayout = (LinearLayout) findViewById(R.id.phonenumbers);
         EditText oneMorePhoneNumberField = new EditText(this);
         oneMorePhoneNumberField.setLayoutParams(new ActionBar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
@@ -130,6 +143,6 @@ public class EditContactActivity extends AppCompatActivity {
             oneMorePhoneNumberField.setBackgroundDrawable(findViewById(R.id.editPhoneNumber).getBackground());
         oneMorePhoneNumberField.setHint("Phone Number");
         phoneNumbers_linearLayout.addView(oneMorePhoneNumberField);
+        return oneMorePhoneNumberField;
     }
-
 }

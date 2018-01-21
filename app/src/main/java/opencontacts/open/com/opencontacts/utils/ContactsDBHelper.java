@@ -72,4 +72,12 @@ public class ContactsDBHelper {
             return null;
         return phoneNumbers.get(0).getContact();
     }
+
+    public static void replacePhoneNumbers(Contact dbContact, List<String> phoneNumbers) {
+        List<PhoneNumber> dbPhoneNumbers = dbContact.getAllPhoneNumbers();
+        for(String phoneNumber : phoneNumbers){
+            new PhoneNumber(phoneNumber, dbContact).save();
+        }
+        PhoneNumber.deleteInTx(dbPhoneNumbers);
+    }
 }
