@@ -3,7 +3,6 @@ package opencontacts.open.com.opencontacts.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +18,6 @@ import ezvcard.VCardVersion;
 import ezvcard.io.text.VCardWriter;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.StructuredName;
-import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
@@ -111,7 +109,6 @@ public class DomainUtils {
                     vcard.addTelephoneNumber(phoneNumber, TelephoneType.CELL);
                 vCardWriter.write(vcard);
             }
-            Toast.makeText(context, R.string.exporting_contacts_complete, Toast.LENGTH_LONG).show();
         }
         finally {
             if(vCardWriter != null)

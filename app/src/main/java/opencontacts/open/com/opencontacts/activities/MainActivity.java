@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -116,11 +117,26 @@ public class MainActivity extends Activity implements TextWatcher {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            try {
-                                DomainUtils.exportAllContacts(MainActivity.this);
-                            } catch (IOException e) {
-                                AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
-                            }
+                            new AsyncTask() {
+                                @Override
+                                protected Object doInBackground(Object[] params) {
+                                    try {
+                                        DomainUtils.exportAllContacts(MainActivity.this);
+                                    } catch (IOException e) {
+                                        return false;
+                                    }
+                                    return true;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Object success) {
+                                    if (Boolean.FALSE.equals(success))
+                                        AndroidUtils.showAlert(MainActivity.this, "Failed", "Failed exporting contacts");
+                                    else
+                                        Toast.makeText(MainActivity.this, R.string.exporting_contacts_complete, Toast.LENGTH_LONG).show();
+
+                                }
+                            }.execute(new Object());
                         }
                     }).setNegativeButton("No", null).show();
             }
