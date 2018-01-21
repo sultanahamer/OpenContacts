@@ -51,8 +51,8 @@ public class MainActivity extends Activity implements TextWatcher {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        callLogLoader = new CallLogLoader();
         setContentView(R.layout.activity_tabbed);
+        callLogLoader = new CallLogLoader();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         findViewById(R.id.button_new).setOnClickListener(new View.OnClickListener() {
