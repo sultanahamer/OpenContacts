@@ -6,6 +6,7 @@
     <string name="error_while_saving_contact">Error occured while saving contact</string>
     <string name="error_while_loading_contact">Error occured while loading contact</string>
     <string name="error_while_parsing_vcard_file">Error occured while parsing vcard file</string>
+    <string name="copied_phonenumber_to_clipboard">Copied phone number to clipboard</string>
     <string name="unexpected_error_happened">Unexpected error happened</string>
     <string name="title_activity_contact_details">ContactDetailsActivity</string>
     <string name="grant_read_call_logs_permission">Please grant read call logs permission to this application</string>

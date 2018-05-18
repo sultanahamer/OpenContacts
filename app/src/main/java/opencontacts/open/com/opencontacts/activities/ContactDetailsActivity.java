@@ -1,6 +1,7 @@
 package opencontacts.open.com.opencontacts.activities;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,17 +36,28 @@ public class ContactDetailsActivity extends AppCompatActivity {
     private View.OnClickListener callContact = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AndroidUtils.call(getSelectedMobileNumber(v), getApplicationContext());
+            AndroidUtils.call(getSelectedMobileNumber((View)v.getParent()), getApplicationContext());
         }
     };
     private View.OnClickListener messageContact = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AndroidUtils.message(getSelectedMobileNumber(v), getApplicationContext());
+            AndroidUtils.message(getSelectedMobileNumber((View)v.getParent()), getApplicationContext());
         }
     };
+
+    private View.OnLongClickListener copyPhoneNumberToClipboard = new View.OnLongClickListener(){
+        @Override
+        public boolean onLongClick(View v) {
+            Context baseContext = getBaseContext();
+            AndroidUtils.copyToClipboard(getSelectedMobileNumber(v), baseContext);
+            Toast.makeText(baseContext, R.string.copied_phonenumber_to_clipboard, Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    };
+
     private String getSelectedMobileNumber(View v){
-        int position = (Integer)((View)v.getParent()).getTag();
+        int position = (Integer)v.getTag();
         return contact.getPhoneNumbers().get(position);
     }
     @Override
@@ -112,6 +124,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
                 ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(mobileNumbers.get(position));
                 convertView.findViewById(R.id.button_call).setOnClickListener(callContact);
                 convertView.findViewById(R.id.button_message).setOnClickListener(messageContact);
+                convertView.setOnLongClickListener(copyPhoneNumberToClipboard);
                 convertView.setTag(position);
                 return convertView;
             }

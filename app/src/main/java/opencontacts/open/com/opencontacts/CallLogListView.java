@@ -1,6 +1,7 @@
 package opencontacts.open.com.opencontacts;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.List;
@@ -77,6 +79,17 @@ public class CallLogListView extends ListView {
             }
         };
 
+        final OnLongClickListener copyPhoneNumberToClipboard = new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
+                Context baseContext = activity.getBaseContext();
+                AndroidUtils.copyToClipboard(callLogEntry.getPhoneNumber(), baseContext);
+                Toast.makeText(baseContext, R.string.copied_phonenumber_to_clipboard, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        };
+
         adapter = new ArrayAdapter<CallLogEntry>(CallLogListView.this.activity, R.layout.call_log_entry, callLogEntries){
             private LayoutInflater layoutInflater = LayoutInflater.from(CallLogListView.this.activity);
             @NonNull
@@ -108,6 +121,7 @@ public class CallLogListView extends ListView {
                     addButton.setVisibility(View.GONE);
                 reusableView.setTag(callLogEntry);
                 reusableView.setOnClickListener(callContact);
+                reusableView.setOnLongClickListener(copyPhoneNumberToClipboard);
                 return reusableView;
             }
         };
