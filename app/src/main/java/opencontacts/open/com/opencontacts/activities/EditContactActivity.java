@@ -141,10 +141,10 @@ public class EditContactActivity extends AppCompatActivity {
         oneMorePhoneNumberField.setLayoutParams(new ActionBar.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         oneMorePhoneNumberField.setInputType(InputType.TYPE_CLASS_PHONE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            oneMorePhoneNumberField.setBackground(findViewById(R.id.editPhoneNumber).getBackground());
+            oneMorePhoneNumberField.setBackground((findViewById(R.id.editPhoneNumber)).getBackground());
         }
         else
-            oneMorePhoneNumberField.setBackgroundDrawable(findViewById(R.id.editPhoneNumber).getBackground());
+            oneMorePhoneNumberField.setBackgroundDrawable((findViewById(R.id.editPhoneNumber)).getBackground());
         oneMorePhoneNumberField.setHint("Phone Number");
         phoneNumbers_linearLayout.addView(oneMorePhoneNumberField);
         return oneMorePhoneNumberField;
