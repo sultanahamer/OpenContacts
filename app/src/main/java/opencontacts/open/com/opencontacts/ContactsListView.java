@@ -49,7 +49,7 @@ public class ContactsListView extends ListView {
         final OnClickListener callContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Contact contact = (Contact) ((View)v.getParent()).getTag();
+                Contact contact = (Contact) v.getTag();
                 AndroidUtils.call(contact.getPhoneNumber(), ContactsListView.this.activity);
             }
         };
@@ -63,7 +63,7 @@ public class ContactsListView extends ListView {
         final OnClickListener showContactDetails = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Contact contact = (Contact) v.getTag();
+                Contact contact = (Contact) ((View)v.getParent()).getTag();
                 selectedContact = contact;
                 activity.startActivityForResult(AndroidUtils.getIntentToShowContactDetails(contact, ContactsListView.this.activity), MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
             }
@@ -79,10 +79,10 @@ public class ContactsListView extends ListView {
                     convertView = layoutInflater.inflate(R.layout.contact, parent, false);
                 ((TextView) convertView.findViewById(R.id.textview_full_name)).setText(contact.getName());
                 ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(contact.getPhoneNumber());
-                ((ImageButton)convertView.findViewById(R.id.button_call)).setOnClickListener(callContact);
+                ((ImageButton)convertView.findViewById(R.id.button_info)).setOnClickListener(showContactDetails);
                 ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 convertView.setTag(contact);
-                convertView.setOnClickListener(showContactDetails);
+                convertView.setOnClickListener(callContact);
                 return convertView;
             }
 

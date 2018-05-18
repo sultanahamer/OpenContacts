@@ -8,8 +8,8 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_call_black_24dp"
-        android:id="@+id/button_call"
+        android:src="@drawable/ic_info_black_24dp"
+        android:id="@+id/button_info"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="5dp"
         android:layout_alignParentTop="true"

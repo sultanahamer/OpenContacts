@@ -41,7 +41,7 @@ public class CallLogListView extends ListView {
         final OnClickListener callContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
+                CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
                 AndroidUtils.call(callLogEntry.getPhoneNumber(), activity);
             }
         };
@@ -65,7 +65,7 @@ public class CallLogListView extends ListView {
         final OnClickListener showContactDetails = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                CallLogEntry callLogEntry = (CallLogEntry) v.getTag();
+                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
@@ -87,7 +87,7 @@ public class CallLogListView extends ListView {
                     reusableView = layoutInflater.inflate(R.layout.call_log_entry, parent, false);
                 ((TextView) reusableView.findViewById(R.id.textview_full_name)).setText(callLogEntry.getName());
                 ((TextView) reusableView.findViewById(R.id.textview_phone_number)).setText(callLogEntry.getPhoneNumber());
-                ((ImageButton)reusableView.findViewById(R.id.button_call)).setOnClickListener(callContact);
+                ((ImageButton)reusableView.findViewById(R.id.button_info)).setOnClickListener(showContactDetails);
                 ((ImageButton)reusableView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
                 if(callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.INCOMING_TYPE)))
                     ((ImageView)reusableView.findViewById(R.id.image_view_call_type)).setImageResource(R.drawable.ic_call_received_black_24dp);
@@ -107,7 +107,7 @@ public class CallLogListView extends ListView {
                 else
                     addButton.setVisibility(View.GONE);
                 reusableView.setTag(callLogEntry);
-                reusableView.setOnClickListener(showContactDetails);
+                reusableView.setOnClickListener(callContact);
                 return reusableView;
             }
         };
