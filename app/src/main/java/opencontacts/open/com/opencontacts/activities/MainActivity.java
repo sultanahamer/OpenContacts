@@ -30,6 +30,7 @@ import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 public class MainActivity extends AppCompatActivity {
     public static final int CONTACTS_TAB_INDEX = 1;
+    public static final String DIALER = "Dialer";
     public static int REQUESTCODE_FOR_ADD_CONTACT = 1;
     public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
     public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(spec);
 
         //Tab 3
-        spec = tabHost.newTabSpec("Dialer");
+        spec = tabHost.newTabSpec(DIALER);
         spec.setContent(R.id.tab_dialer);
         ImageView imageView = new ImageView(this);
         imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_dialpad_black_24dp));
@@ -154,7 +155,13 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(spec);
 
         linkDialerButtonsToHandlers();
-
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                if(DIALER.equals(tabId))
+                    AndroidUtils.showSoftKeyboard(findViewById(R.id.editText_dialpad_number), getBaseContext());
+            }
+        });
         new AsyncTask<Void, String, Void>() {
             String callLogLoaded = "call log loaded";
             String contactsLoaded = "contacts loaded";
