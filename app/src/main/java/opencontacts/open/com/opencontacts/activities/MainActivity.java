@@ -22,7 +22,7 @@ import opencontacts.open.com.opencontacts.CallLogListView;
 import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.ContactsListView;
 import opencontacts.open.com.opencontacts.R;
-import opencontacts.open.com.opencontacts.actions.ExportActionHandler;
+import opencontacts.open.com.opencontacts.actions.ExportMenuItemClickHandler;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        menu.findItem(R.id.action_export).setOnMenuItemClickListener(new ExportActionHandler(this));
+        menu.findItem(R.id.action_export).setOnMenuItemClickListener(new ExportMenuItemClickHandler(this));
         return super.onCreateOptionsMenu(menu);
     }
     private void refresh(){

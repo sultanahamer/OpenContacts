@@ -10,7 +10,6 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import opencontacts.open.com.opencontacts.R;
-import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
@@ -18,10 +17,10 @@ import opencontacts.open.com.opencontacts.utils.DomainUtils;
  * Created by sultanm on 1/21/18.
  */
 
-public class ExportActionHandler implements MenuItem.OnMenuItemClickListener{
+public class ExportMenuItemClickHandler implements MenuItem.OnMenuItemClickListener{
     private Context context;
 
-    public ExportActionHandler(Context context) {
+    public ExportMenuItemClickHandler(Context context) {
         this.context = context;
     }
 
