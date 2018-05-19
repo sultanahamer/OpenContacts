@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 
@@ -24,6 +24,7 @@ import opencontacts.open.com.opencontacts.ContactsListView;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.actions.ExportActionHandler;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
@@ -34,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
     public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";
     private Toolbar toolbar;
-    private EditText searchBar;
-    private ImageButton stopSearch;
     private ContactsListView contactsListView;
     private CallLogListView callLogListView;
     private CallLogLoader callLogLoader;
@@ -145,6 +144,17 @@ public class MainActivity extends AppCompatActivity {
         spec.setIndicator("Contacts");
         tabHost.addTab(spec);
 
+        //Tab 3
+        spec = tabHost.newTabSpec("Dialer");
+        spec.setContent(R.id.tab_dialer);
+        ImageView imageView = new ImageView(this);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_dialpad_black_24dp));
+        imageView.setPadding(10, 15, 10, 15);
+        spec.setIndicator(imageView);
+        tabHost.addTab(spec);
+
+        linkDialerButtonsToHandlers();
+
         new AsyncTask<Void, String, Void>() {
             String callLogLoaded = "call log loaded";
             String contactsLoaded = "contacts loaded";
@@ -173,6 +183,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.execute();
+    }
+
+    private void linkDialerButtonsToHandlers() {
+        final EditText editTextDialpadNumber = (EditText) findViewById(R.id.editText_dialpad_number);
+        findViewById(R.id.button_call).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidUtils.call(editTextDialpadNumber.getText().toString(), getBaseContext());
+            }
+        });
+        findViewById(R.id.button_message).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AndroidUtils.message(editTextDialpadNumber.getText().toString(), getBaseContext());
+            }
+        });
+        findViewById(R.id.button_add_contact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(editTextDialpadNumber.getText().toString(), getBaseContext());
+                startActivityForResult(intentToAddContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
+            }
+        });
     }
 
     @Override

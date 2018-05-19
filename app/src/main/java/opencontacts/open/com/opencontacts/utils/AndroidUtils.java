@@ -78,6 +78,12 @@ public class AndroidUtils {
         return context.getSharedPreferences(context.getString(R.string.app_name), context.MODE_PRIVATE);
     }
 
+    public static Intent getIntentToAddContact(String phoneNumber, Context context){
+        return new Intent(context, EditContactActivity.class)
+            .putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true)
+            .putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, phoneNumber);
+    }
+
     public static void showAlert(Context context, String title, String message){
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

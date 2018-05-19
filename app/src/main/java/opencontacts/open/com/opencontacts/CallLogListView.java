@@ -58,10 +58,8 @@ public class CallLogListView extends ListView {
             @Override
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
-                Intent addContact = new Intent(activity, EditContactActivity.class);
-                addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
-                addContact.putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, callLogEntry.getPhoneNumber());
-                activity.startActivityForResult(addContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
+                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(callLogEntry.getPhoneNumber(), activity);
+                activity.startActivityForResult(intentToAddContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
             }
         };
         final OnClickListener showContactDetails = new OnClickListener() {

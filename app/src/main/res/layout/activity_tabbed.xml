@@ -47,6 +47,12 @@
                     android:id="@+id/tab_contacts"
                     layout="@layout/activity_contacts">
                 </include>
+
+                <include
+                    android:id="@+id/tab_dialer"
+                    layout="@layout/dialer">
+                </include>
+
             </FrameLayout>
             <TabWidget
                 android:id="@android:id/tabs"
