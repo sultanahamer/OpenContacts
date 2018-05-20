@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tabId) {
                 if(DIALER.equals(tabId))
-                    AndroidUtils.showSoftKeyboard(findViewById(R.id.editText_dialpad_number), getBaseContext());
+                    AndroidUtils.showSoftKeyboard(findViewById(R.id.editText_dialpad_number), MainActivity.this);
             }
         });
         new AsyncTask<Void, String, Void>() {
@@ -197,19 +197,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.button_call).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AndroidUtils.call(editTextDialpadNumber.getText().toString(), getBaseContext());
+                AndroidUtils.call(editTextDialpadNumber.getText().toString(), MainActivity.this);
             }
         });
         findViewById(R.id.button_message).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AndroidUtils.message(editTextDialpadNumber.getText().toString(), getBaseContext());
+                AndroidUtils.message(editTextDialpadNumber.getText().toString(), MainActivity.this);
             }
         });
         findViewById(R.id.button_add_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(editTextDialpadNumber.getText().toString(), getBaseContext());
+                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(editTextDialpadNumber.getText().toString(), MainActivity.this);
                 startActivityForResult(intentToAddContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
             }
         });

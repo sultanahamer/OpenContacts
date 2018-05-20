@@ -1,7 +1,6 @@
 package opencontacts.open.com.opencontacts.activities;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,22 +35,21 @@ public class ContactDetailsActivity extends AppCompatActivity {
     private View.OnClickListener callContact = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AndroidUtils.call(getSelectedMobileNumber((View)v.getParent()), getApplicationContext());
+            AndroidUtils.call(getSelectedMobileNumber((View)v.getParent()), ContactDetailsActivity.this);
         }
     };
     private View.OnClickListener messageContact = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AndroidUtils.message(getSelectedMobileNumber((View)v.getParent()), getApplicationContext());
+            AndroidUtils.message(getSelectedMobileNumber((View)v.getParent()), ContactDetailsActivity.this);
         }
     };
 
     private View.OnLongClickListener copyPhoneNumberToClipboard = new View.OnLongClickListener(){
         @Override
         public boolean onLongClick(View v) {
-            Context baseContext = getBaseContext();
-            AndroidUtils.copyToClipboard(getSelectedMobileNumber(v), baseContext);
-            Toast.makeText(baseContext, R.string.copied_phonenumber_to_clipboard, Toast.LENGTH_SHORT).show();
+            AndroidUtils.copyToClipboard(getSelectedMobileNumber(v), ContactDetailsActivity.this);
+            Toast.makeText(ContactDetailsActivity.this, R.string.copied_phonenumber_to_clipboard, Toast.LENGTH_SHORT).show();
             return true;
         }
     };
@@ -142,7 +140,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void exportToContactsApp() {
+    private void exportToContactsApp() {
         Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
 
         ArrayList<ContentValues> data = new ArrayList<ContentValues>();
