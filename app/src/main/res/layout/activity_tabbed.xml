@@ -1,66 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_tabbed"
-    tools:context="opencontacts.open.com.opencontacts.activities.MainActivity"
-    android:orientation="vertical"
-    >
-
+    tools:context="opencontacts.open.com.opencontacts.activities.MainActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-
-    <TabHost
-        android:id="@+id/tab_host"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        android:title="Open Contacts"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"/>
+    <android.support.v4.view.ViewPager
+        android:layout_above="@id/tab_layout"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <RelativeLayout
+        android:layout_height="wrap_content" />
+
+    <android.support.design.widget.TabLayout
+            android:layout_alignParentBottom="true"
+            android:id="@+id/tab_layout"
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-            <FrameLayout
-                android:layout_above="@android:id/tabs"
-                android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <include
-                    android:id="@+id/tab_call_log"
-                    layout="@layout/call_log">
-                </include>
-
-                <include
-                    android:id="@+id/tab_contacts"
-                    layout="@layout/activity_contacts">
-                </include>
-
-                <include
-                    android:id="@+id/tab_dialer"
-                    layout="@layout/dialer">
-                </include>
-
-            </FrameLayout>
-            <TabWidget
-                android:layout_alignParentBottom="true"
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:orientation="horizontal"
-                />
-
-        </RelativeLayout>
-    </TabHost>
-</LinearLayout>
+            android:layout_height="wrap_content" />
+</RelativeLayout>

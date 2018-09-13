@@ -9,8 +9,8 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/button_new"
+        android:icon="@drawable/ic_add_circle_outline_black_24dp"
         android:title="Add contact"
-        android:icon="@android:drawable/ic_menu_add"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_export"

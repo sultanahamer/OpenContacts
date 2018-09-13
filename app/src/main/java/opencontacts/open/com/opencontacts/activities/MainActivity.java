@@ -3,7 +3,11 @@ package opencontacts.open.com.opencontacts.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -11,20 +15,20 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TabHost;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.CallLogListView;
-import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.ContactsListView;
+import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.actions.ExportMenuItemClickHandler;
+import opencontacts.open.com.opencontacts.fragments.CallLogFragment;
+import opencontacts.open.com.opencontacts.fragments.ContactsFragment;
+import opencontacts.open.com.opencontacts.fragments.DialerFragment;
+import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ContactsListView contactsListView;
     private CallLogListView callLogListView;
     private CallLogLoader callLogLoader;
-    private TabHost tabHost;
+    private ViewPager viewPager;
     private Menu menu;
 
     @Override
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tabHost.setCurrentTab(CONTACTS_TAB_INDEX);
+                viewPager.setCurrentItem(CONTACTS_TAB_INDEX);
                 searchView.requestFocus();
             }
         });
@@ -124,45 +128,54 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void fillContactsTab() {
-        if(contactsListView == null)
-            contactsListView = new ContactsListView(this);
-    }
-
     private void setupTabs() {
-        tabHost = (TabHost)findViewById(R.id.tab_host);
-        tabHost.setup();
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
 
-        //Tab 1
-        TabHost.TabSpec spec = tabHost.newTabSpec("Call Log");
-        spec.setContent(R.id.tab_call_log);
-        spec.setIndicator("Call Log");
-        tabHost.addTab(spec);
+        final List<SelectableTab> tabs= new ArrayList<>();
+        tabs.add(new CallLogFragment());
+        tabs.add(new ContactsFragment());
+        tabs.add(new DialerFragment());
+        final String[] tabTitles = new String[]{"Call Log", "Contacts", ""};
 
-        //Tab 2
-        spec = tabHost.newTabSpec("Contacts");
-        spec.setContent(R.id.tab_contacts);
-        spec.setIndicator("Contacts");
-        tabHost.addTab(spec);
-
-        //Tab 3
-        spec = tabHost.newTabSpec(DIALER);
-        spec.setContent(R.id.tab_dialer);
-        ImageView imageView = new ImageView(this);
-        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_dialpad_black_24dp));
-        int fiveDP = (int) AndroidUtils.dpToPixels(5);
-        imageView.setPadding(fiveDP, fiveDP * 2, fiveDP, fiveDP * 2);
-        spec.setIndicator(imageView);
-        tabHost.addTab(spec);
-
-        linkDialerButtonsToHandlers();
-        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+        FragmentPagerAdapter fragmentStatePagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
-            public void onTabChanged(String tabId) {
-                if(DIALER.equals(tabId))
-                    AndroidUtils.showSoftKeyboard(findViewById(R.id.editText_dialpad_number), MainActivity.this);
+            public int getCount() {
+                return 3;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return tabTitles[position];
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return (Fragment) tabs.get(position);
+            }
+        };
+        viewPager.setAdapter(fragmentStatePagerAdapter);
+        viewPager.setOffscreenPageLimit(3); //crazy shit with viewPager in case used with tablayout
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_dialpad_black_24dp);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                tabs.get(tab.getPosition()).onSelect();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                tabs.get(tab.getPosition()).onUnSelect();
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
+
         new AsyncTask<Void, String, Void>() {
             String callLogLoaded = "call log loaded";
             String contactsLoaded = "contacts loaded";
@@ -172,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
                 callLogLoader.loadCallLog(MainActivity.this);
                 callLogListView = new CallLogListView(MainActivity.this);
                 publishProgress(callLogLoaded);
-                fillContactsTab();
+                if(contactsListView == null)
+                    contactsListView = new ContactsListView(MainActivity.this);
                 publishProgress(contactsLoaded);
                 return null;
             }
@@ -181,39 +195,14 @@ public class MainActivity extends AppCompatActivity {
             protected void onProgressUpdate(String... progress) {
                 super.onProgressUpdate(progress);
                 if(callLogLoaded.equals(progress[0])){
-                    LinearLayout call_logs_holder_layout  = (LinearLayout) findViewById(R.id.tab_call_log);
-                    call_logs_holder_layout.addView(callLogListView);
+                    ((CallLogFragment)tabs.get(0)).addCallLog(callLogListView);
                 }
 
                 if(contactsLoaded.equals(progress[0])) {
-                    LinearLayout contacts_holder_layout  = (LinearLayout) findViewById(R.id.tab_contacts);
-                    contacts_holder_layout.addView(contactsListView);
+                    ((ContactsFragment)tabs.get(1)).addContactsList(contactsListView);
                 }
             }
         }.execute();
-    }
-
-    private void linkDialerButtonsToHandlers() {
-        final EditText editTextDialpadNumber = (EditText) findViewById(R.id.editText_dialpad_number);
-        findViewById(R.id.button_call).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AndroidUtils.call(editTextDialpadNumber.getText().toString(), MainActivity.this);
-            }
-        });
-        findViewById(R.id.button_message).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AndroidUtils.message(editTextDialpadNumber.getText().toString(), MainActivity.this);
-            }
-        });
-        findViewById(R.id.button_add_contact).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(editTextDialpadNumber.getText().toString(), MainActivity.this);
-                startActivityForResult(intentToAddContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
-            }
-        });
     }
 
     @Override

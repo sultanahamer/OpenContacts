@@ -24,6 +24,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'com.android.support:appcompat-v7:25.4.0'
+    implementation 'com.android.support:design:25.4.0'
     implementation 'com.googlecode.ez-vcard:ez-vcard:0.10.2'
     implementation 'com.github.satyan:sugar:1.5'
     testImplementation 'junit:junit:4.12'
