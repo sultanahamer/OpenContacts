@@ -24,9 +24,13 @@
         android:layout_height="wrap_content" />
 
     <android.support.design.widget.TabLayout
-            android:layout_alignParentBottom="true"
-            android:id="@+id/tab_layout"
-            android:layout_gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        app:tabIndicatorColor="@android:color/white"
+        app:tabBackground="@color/colorPrimary"
+        app:tabTextColor="@android:color/white"
+        app:tabSelectedTextColor="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/tab_layout"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>
