@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -26,6 +27,11 @@ import opencontacts.open.com.opencontacts.domain.Contact;
  */
 
 public class AndroidUtils {
+
+    public static float dpToPixels(int dp) {
+        return Resources.getSystem().getDisplayMetrics().density * dp;
+    }
+
     public static void showSoftKeyboard(View view, Context context) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)

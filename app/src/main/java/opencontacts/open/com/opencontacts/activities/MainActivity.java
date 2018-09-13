@@ -150,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
         spec.setContent(R.id.tab_dialer);
         ImageView imageView = new ImageView(this);
         imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_dialpad_black_24dp));
-        imageView.setPadding(10, 15, 10, 15);
+        int fiveDP = (int) AndroidUtils.dpToPixels(5);
+        imageView.setPadding(fiveDP, fiveDP * 2, fiveDP, fiveDP * 2);
         spec.setIndicator(imageView);
         tabHost.addTab(spec);
 
