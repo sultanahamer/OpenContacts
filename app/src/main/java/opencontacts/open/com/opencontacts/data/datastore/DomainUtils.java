@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts.utils;
+package opencontacts.open.com.opencontacts.data.datastore;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -21,6 +21,7 @@ import ezvcard.property.StructuredName;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.PhoneNumber;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 /**
  * Created by sultanm on 7/22/17.
@@ -93,7 +94,7 @@ public class DomainUtils {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy hh-mm-ss");
         File file = new File(path, "Contacts_" + simpleDateFormat.format(new Date()) + " .vcf");
         file.createNewFile();
-        List<Contact> allContacts = getAllContacts();
+        List<Contact> allContacts = ContactsDataStore.getAllContacts();
         VCardWriter vCardWriter = null;
         try{
             vCardWriter = new VCardWriter(new FileOutputStream(file), VCardVersion.V4_0);

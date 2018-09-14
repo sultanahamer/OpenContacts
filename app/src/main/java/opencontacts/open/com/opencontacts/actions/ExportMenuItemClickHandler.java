@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.DomainUtils;
+import opencontacts.open.com.opencontacts.data.datastore.DomainUtils;
 
 /**
  * Created by sultanm on 1/21/18.

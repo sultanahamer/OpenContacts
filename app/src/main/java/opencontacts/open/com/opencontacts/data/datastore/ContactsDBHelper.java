@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts.utils;
+package opencontacts.open.com.opencontacts.data.datastore;
 
 import java.util.ArrayList;
 import java.util.List;

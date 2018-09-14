@@ -3,7 +3,6 @@ package opencontacts.open.com.opencontacts.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,12 +14,11 @@ import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.R;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
 
 import static android.view.ViewGroup.LayoutParams.*;
 
@@ -84,55 +82,27 @@ public class EditContactActivity extends AppCompatActivity {
             editText_mobileNumber.setError("Required");
             return;
         }
-        opencontacts.open.com.opencontacts.orm.Contact dbContact;
+
         if(addingNewContact)
-            dbContact = addNewContact(firstName, lastName, phoneNumber);
+            ContactsDataStore.addContact(firstName, lastName, getPhoneNumbersFromView());
         else
-            dbContact = updateExistingContact(firstName, lastName, phoneNumber);
+            ContactsDataStore.updateContact(new Contact(contact.getId(), firstName, lastName, getPhoneNumbersFromView()));
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
-        Intent result = new Intent();
-        result.putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, dbContact.getId());
-        setResult(RESULT_OK, result);
         finish();
     }
 
-    @NonNull
-    private opencontacts.open.com.opencontacts.orm.Contact updateExistingContact(String firstName, String lastName, String phoneNumber) {
-        opencontacts.open.com.opencontacts.orm.Contact dbContact;
-        dbContact = ContactsDBHelper.getContactWithId(contact.getId());
-        dbContact.firstName = firstName;
-        dbContact.lastName = lastName;
-        dbContact.save();
-        savePhoneNumbers(dbContact);
-        return dbContact;
-    }
-
-    @NonNull
-    private opencontacts.open.com.opencontacts.orm.Contact addNewContact(String firstName, String lastName, String phoneNumber) {
-        opencontacts.open.com.opencontacts.orm.Contact dbContact;
-        dbContact = new opencontacts.open.com.opencontacts.orm.Contact(firstName, lastName);
-        dbContact.save();
-        savePhoneNumbers(dbContact);
-        return dbContact;
-    }
-
-    private void savePhoneNumbers(opencontacts.open.com.opencontacts.orm.Contact dbContact) {
+    private List<String> getPhoneNumbersFromView() {
         LinearLayout phoneNumbersContainer = (LinearLayout) findViewById(R.id.phonenumbers);
         int numberOfPhoneNumbers = phoneNumbersContainer.getChildCount();
         String extraPhoneNumber;
-        if(numberOfPhoneNumbers > 1){
-            ArrayList<String> phoneNumbers = new ArrayList(numberOfPhoneNumbers);
-            for(int i=0; i<numberOfPhoneNumbers; i++){
-                extraPhoneNumber = String.valueOf(((EditText) phoneNumbersContainer.getChildAt(i)).getText());
-                if("".equals(extraPhoneNumber))
-                    continue;
-                else
-                    phoneNumbers.add(extraPhoneNumber);
-            }
-            ContactsDBHelper.replacePhoneNumbers(dbContact, phoneNumbers);
+        ArrayList<String> phoneNumbers = new ArrayList(numberOfPhoneNumbers);
+        for(int i=0; i<numberOfPhoneNumbers; i++){
+            extraPhoneNumber = String.valueOf(((EditText) phoneNumbersContainer.getChildAt(i)).getText());
+            if("".equals(extraPhoneNumber))
+                continue;
+            phoneNumbers.add(extraPhoneNumber);
         }
-        else
-            ContactsDBHelper.replacePhoneNumbers(dbContact, Arrays.asList(String.valueOf(editText_mobileNumber.getText())));
+        return phoneNumbers;
     }
 
     public EditText addOneMorePhoneNumberView(View view){

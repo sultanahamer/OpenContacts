@@ -24,7 +24,7 @@ import java.util.List;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 
 public class ContactDetailsActivity extends AppCompatActivity {

@@ -29,7 +29,7 @@ import opencontacts.open.com.opencontacts.fragments.ContactsFragment;
 import opencontacts.open.com.opencontacts.fragments.DialerFragment;
 import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.utils.DomainUtils;
+import opencontacts.open.com.opencontacts.data.datastore.DomainUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -64,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        contactsListView.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 Intent addContact = new Intent(MainActivity.this, EditContactActivity.class);
                 addContact.putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true);
-                startActivityForResult(addContact, REQUESTCODE_FOR_ADD_CONTACT);
+                startActivity(addContact);
                 return false;
             }
         });
@@ -203,27 +209,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.execute();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode == RESULT_CANCELED)
-            return;
-        long contactId = intent.getLongExtra(INTENT_EXTRA_LONG_CONTACT_ID, -1);
-        if(requestCode == REQUESTCODE_FOR_ADD_CONTACT && resultCode == RESULT_OK)
-            contactsListView.addNewContactInView(contactId);
-        else if(requestCode == REQUESTCODE_FOR_SHOW_CONTACT_DETAILS && resultCode == RESULT_OK){
-            if(intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_CONTACT_DELETED, false)){
-                contactsListView.deleteContactInView(contactId);
-            }
-            else
-                contactsListView.updateContactInView(contactId);
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 }

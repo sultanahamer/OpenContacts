@@ -24,7 +24,8 @@ import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
-import opencontacts.open.com.opencontacts.utils.DomainUtils;
+
+import static opencontacts.open.com.opencontacts.data.datastore.DomainUtils.getContact;
 
 /**
  * Created by sultanm on 7/31/17.
@@ -69,10 +70,10 @@ public class CallLogListView extends ListView {
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
-                Contact contact = DomainUtils.getContact(contactId);
+                Contact contact = getContact(contactId);
                 if(contact == null)
                     return;
-                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(DomainUtils.getContact(contactId), CallLogListView.this.context);
+                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(getContact(contactId), CallLogListView.this.context);
                 ((Activity)(CallLogListView.this.context)).startActivityForResult(showContactDetails, MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
             }
         };

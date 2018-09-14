@@ -24,7 +24,7 @@ import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 /**
  * Created by sultanm on 7/30/17.

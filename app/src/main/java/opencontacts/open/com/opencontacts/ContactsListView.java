@@ -2,218 +2,86 @@ package opencontacts.open.com.opencontacts;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Filter;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import opencontacts.open.com.opencontacts.activities.MainActivity;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 /**
  * Created by sultanm on 3/25/17.
  */
 
-public class ContactsListView extends ListView {
-    final List <Contact> contacts;
-    ContactsListView thisClass = this;
-    public static final String ACTION_UPDATED = "action_updated";
-    Context activity;
-    Contact selectedContact = null;
-    ArrayAdapter<Contact> adapter;
-    Object mLock = new Object();
+public class ContactsListView extends ListView implements ContactsDataStore.ContactsDataChangeListener, ContactsListViewAdapter.ContactsListActionsListener {
+    private final List <Contact> contacts;
+    private Context activity;
+    private ContactsListViewAdapter adapter;
+
 
     public ContactsListView(final Activity activity) {
         super(activity);
         this.activity = activity;
         setTextFilterEnabled(true);
-        contacts = DomainUtils.getAllContacts();
+        contacts = ContactsDataStore.getAllContacts();
+        ContactsDataStore.addDataChangeListener(this);
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
             public int compare(Contact contact1, Contact contact2) {
                 return contact1.getName().compareToIgnoreCase(contact2.getName());
             }
         });
-        final OnClickListener callContact = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Contact contact = (Contact) v.getTag();
-                AndroidUtils.call(contact.getPhoneNumber(), ContactsListView.this.activity);
-            }
-        };
-        final OnClickListener messageContact = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Contact contact = (Contact) ((View)v.getParent()).getTag();
-                AndroidUtils.message(contact.getPhoneNumber(), ContactsListView.this.activity);
-            }
-        };
-        final OnClickListener showContactDetails = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Contact contact = (Contact) ((View)v.getParent()).getTag();
-                selectedContact = contact;
-                activity.startActivityForResult(AndroidUtils.getIntentToShowContactDetails(contact, ContactsListView.this.activity), MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
-            }
-        };
 
-        adapter = new ArrayAdapter<Contact>(ContactsListView.this.activity, R.layout.contact, new ArrayList<Contact>(contacts)){
-            private LayoutInflater layoutInflater = LayoutInflater.from(ContactsListView.this.activity);
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                Contact contact = getItem(position);
-                if(convertView == null)
-                    convertView = layoutInflater.inflate(R.layout.contact, parent, false);
-                ((TextView) convertView.findViewById(R.id.textview_full_name)).setText(contact.getName());
-                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(contact.getPhoneNumber());
-                ((ImageButton)convertView.findViewById(R.id.button_info)).setOnClickListener(showContactDetails);
-                ((ImageButton)convertView.findViewById(R.id.button_message)).setOnClickListener(messageContact);
-                convertView.setTag(contact);
-                convertView.setOnClickListener(callContact);
-                return convertView;
-            }
+        adapter = new ContactsListViewAdapter(activity, R.layout.contact, contacts);
+        adapter.setContactsListActionsListener(this);
 
-            @NonNull
-            @Override
-            public Filter getFilter() {
-                return new Filter() {
-                    @Override
-                    protected synchronized FilterResults  performFiltering(CharSequence constraint) {
-                        FilterResults results = new FilterResults();
-                        if(constraint == null || constraint.length() == 0){
-                            results.values = contacts;
-                            results.count = contacts.size();
-                        }
-                        else {
-                            ArrayList<Contact> filteredContacts = new ArrayList<>();
-                            for (Contact c : contacts) {
-                                if (c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
-                                    filteredContacts.add(c);
-                                }
-                            }
-                            Collections.sort(filteredContacts, new Comparator<Contact>() {
-                                @Override
-                                public int compare(Contact contact1, Contact contact2) {
-                                    String lastAccessedDate1 = contact1.getLastAccessed();
-                                    String lastAccessedDate2 = contact2.getLastAccessed();
-                                    if(lastAccessedDate1 == null && lastAccessedDate2 == null)
-                                        return 0;
-                                    else if(lastAccessedDate1 == null)
-                                        return 1;
-                                    else if (lastAccessedDate2 == null)
-                                        return -1;
-                                    else
-                                    return lastAccessedDate2.compareTo(lastAccessedDate1);
-                                }
-                            });
-                            results.values = filteredContacts;
-                            results.count = filteredContacts.size();
-                        }
-
-                        return results;
-                    }
-
-                    @Override
-                    protected synchronized void publishResults(CharSequence constraint, FilterResults results) {
-                        adapter.clear();
-                        if (constraint == null || constraint.length() == 0) {
-                            addAllContactsToAdapter(contacts);
-                        }
-                        else
-                            addAllContactsToAdapter((List<Contact>) results.values);
-                        notifyDataSetChanged();
-                    }
-                };
-            }
-        };
         this.setAdapter(adapter);
     }
-    private synchronized void addAllContactsToAdapter(List<Contact> contactsList){
-        for(Contact contact : contactsList)
-            adapter.add(contact);
-    }
 
-    public void updateContactViewAt(int position, long contactId) {
-        Contact oldContactInView = adapter.getItem(position);
-        if(oldContactInView == null)
-            return;
-        else{
-            adapter.remove(adapter.getItem(position));
-            Contact updatedContact = DomainUtils.getContact(contactId);
-            if(updatedContact == null){
-                adapter.notifyDataSetChanged();
-                return;
-            }
-            adapter.insert(updatedContact, position);
-            adapter.notifyDataSetChanged();
-        }
-    }
+    @Override
+    public void onUpdate(Contact contact) {
+        contacts.remove(contact);
+        adapter.remove(contact);
 
-    public void addNewContactInView(long newContactId) {
-        Contact newContact = DomainUtils.getContact(newContactId);
-        adapter.add(newContact);
-        contacts.add(newContact);
+        adapter.add(contact);
+        contacts.add(contact);
+
         adapter.notifyDataSetChanged();
     }
 
-    public  void deleteContactViewAt(int position){
-        Contact contact = adapter.getItem(position);
+    @Override
+    public void onRemove(Contact contact) {
         adapter.remove(contact);
         contacts.remove(contact);
         adapter.notifyDataSetChanged();
     }
 
-    public void deleteContactInView(long contactId) {
-        if(selectedContact == null)
-            return;
-        CharSequence textFilter = null;
-        if(this.hasTextFilter())
-            textFilter = this.getTextFilter();
-        int position = adapter.getPosition(selectedContact);
-        if(position == -1){
-            selectedContact = null;
-            return;
-        }
-        if(contactId == selectedContact.getId()){
-            deleteContactViewAt(position);
-            this.clearTextFilter();
-            if(textFilter != null)
-                this.setFilterText(textFilter.toString());
-            selectedContact = null;
-        }
-
+    @Override
+    public void onAdd(Contact contact) {
+        adapter.add(contact);
+        contacts.add(contact);
+        adapter.notifyDataSetChanged();
     }
 
-    public void updateContactInView(long contactId) {
-        if(selectedContact == null)
-            return;
-        CharSequence textFilter = null;
-        if(this.hasTextFilter())
-            textFilter = this.getTextFilter();
-        int position = adapter.getPosition(selectedContact);
-        if(position == -1){
-            selectedContact = null;
-            return;
-        }
-        if(contactId == selectedContact.getId()){
-            updateContactViewAt(position, contactId);
-            this.clearTextFilter();
-            if(textFilter != null)
-                this.setFilterText(textFilter.toString());
-            selectedContact = null;
-        }
+    public void onDestroy(){
+        ContactsDataStore.removeDataChangeListener(this);
+    }
+
+    @Override
+    public void onCallClicked(Contact contact) {
+        AndroidUtils.call(contact.getPhoneNumber(), activity);
+    }
+
+    @Override
+    public void onMessageClicked(Contact contact) {
+        AndroidUtils.message(contact.getPhoneNumber(), activity);
+    }
+
+    @Override
+    public void onShowDetails(Contact contact) {
+        activity.startActivity(AndroidUtils.getIntentToShowContactDetails(contact, activity));
     }
 }

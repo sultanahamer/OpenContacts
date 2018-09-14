@@ -17,7 +17,7 @@ import java.util.List;
 
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.utils.ContactsDBHelper;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 import static android.content.Context.TELEPHONY_SUBSCRIPTION_SERVICE;
 

@@ -18,6 +18,20 @@ public class Contact implements Serializable{
 
     private String lastAccessed;
 
+    public Contact(long id, String firstName, String lastName, List<String> phoneNumbers) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumbers = phoneNumbers;
+    }
+
+    public Contact(String firstName, String lastName, List<String> phoneNumbers) {
+        this.id = -1;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumbers = phoneNumbers;
+    }
+
     public Contact(long id, String firstName, String lastName, List<String> phoneNumbers, String lastAccessed) {
         this.id = id;
         this.firstName = firstName;
@@ -88,5 +102,12 @@ public class Contact implements Serializable{
 
     public void setPhoneNumbers(List<String> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof Contact))
+            return false;
+        return getId().equals(((Contact) obj).getId());
     }
 }
