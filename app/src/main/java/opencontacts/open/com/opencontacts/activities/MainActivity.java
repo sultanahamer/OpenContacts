@@ -29,22 +29,19 @@ import opencontacts.open.com.opencontacts.fragments.ContactsFragment;
 import opencontacts.open.com.opencontacts.fragments.DialerFragment;
 import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.data.datastore.DomainUtils;
+import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
 public class MainActivity extends AppCompatActivity {
     public static final int CONTACTS_TAB_INDEX = 1;
-    public static final String DIALER = "Dialer";
     public static int REQUESTCODE_FOR_ADD_CONTACT = 1;
     public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
-    public static final String INTENT_EXTRA_BOOLEAN_CONTACT_DELETED = "contact_deleted";
     public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";
     private Toolbar toolbar;
     private ContactsListView contactsListView;
     private CallLogListView callLogListView;
     private CallLogLoader callLogLoader;
     private ViewPager viewPager;
-    private Menu menu;
 
     @Override
     protected void onResume() {
@@ -71,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
         menu.findItem(R.id.button_new).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override

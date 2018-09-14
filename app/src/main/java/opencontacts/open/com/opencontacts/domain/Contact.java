@@ -18,6 +18,10 @@ public class Contact implements Serializable{
 
     private String lastAccessed;
 
+    public Contact(long id) {
+        this.id = id;
+    }
+
     public Contact(long id, String firstName, String lastName, List<String> phoneNumbers) {
         this.id = id;
         this.firstName = firstName;

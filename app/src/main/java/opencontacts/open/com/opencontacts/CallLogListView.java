@@ -20,12 +20,11 @@ import java.util.List;
 import java.util.Locale;
 
 import opencontacts.open.com.opencontacts.activities.MainActivity;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
-
-import static opencontacts.open.com.opencontacts.data.datastore.DomainUtils.getContact;
 
 /**
  * Created by sultanm on 7/31/17.
@@ -70,10 +69,10 @@ public class CallLogListView extends ListView {
                 long contactId = callLogEntry.getContactId();
                 if(contactId == -1)
                     return;
-                Contact contact = getContact(contactId);
+                Contact contact = ContactsDataStore.getContactWithId(contactId);
                 if(contact == null)
                     return;
-                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(getContact(contactId), CallLogListView.this.context);
+                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(ContactsDataStore.getContactWithId(contactId), CallLogListView.this.context);
                 ((Activity)(CallLogListView.this.context)).startActivityForResult(showContactDetails, MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
             }
         };

@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.R;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 
 public class ContactDetailsActivity extends AppCompatActivity {
@@ -73,7 +72,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             finish();
         }
 
-        ((ImageButton)findViewById(R.id.image_button_delete_contact)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_button_delete_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(ContactDetailsActivity.this)
@@ -81,12 +80,8 @@ public class ContactDetailsActivity extends AppCompatActivity {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ContactsDBHelper.deleteContact(contact.getId());
+                                ContactsDataStore.removeContact(contact);
                                 Toast.makeText(ContactDetailsActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-                                Intent result = new Intent();
-                                result.putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, contact.getId());
-                                result.putExtra(MainActivity.INTENT_EXTRA_BOOLEAN_CONTACT_DELETED, true);
-                                setResult(RESULT_OK, result);
                                 finish();
                             }
                         })
@@ -94,7 +89,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             }
         });
 
-        ((ImageButton)findViewById(R.id.image_button_edit_contact)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_button_edit_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent editContact = new Intent(ContactDetailsActivity.this, EditContactActivity.class);
@@ -103,7 +98,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             }
         });
 
-        ((ImageButton)findViewById(R.id.image_button_export_to_contacts_app)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_button_export_to_contacts_app).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 exportToContactsApp();
@@ -132,10 +127,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode == RESULT_CANCELED)
-            return;
         if(requestCode == REQUESTCODE_FOR_EDIT_CONTACT && resultCode == RESULT_OK){
-            setResult(RESULT_OK, intent);
             finish();
         }
     }

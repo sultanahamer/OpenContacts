@@ -21,10 +21,10 @@ import java.util.Random;
 import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.activities.MainActivity;
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.orm.Contact;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 /**
  * Created by sultanm on 7/30/17.
@@ -43,7 +43,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
             isCallRecieved = false;
             incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            callingContact = ContactsDBHelper.getContact(incomingNumber);
+            callingContact = ContactsDataStore.getContact(incomingNumber);
             if(callingContact == null)
                 callingContact = new Contact(unknown, incomingNumber);
             drawContactID(context, callingContact);

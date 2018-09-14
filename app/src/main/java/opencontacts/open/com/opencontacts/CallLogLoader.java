@@ -15,9 +15,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
-import opencontacts.open.com.opencontacts.data.datastore.ContactsDBHelper;
 
 import static android.content.Context.TELEPHONY_SUBSCRIPTION_SERVICE;
 
@@ -78,7 +78,7 @@ public class CallLogLoader {
                 dateOfCall = c.getString(columnIndexForDate);
                 callType = c.getString(columnIndexForCallType);// for call type, Incoming or out going
                 subscriptionIdForCall = c.getString(columnIndexForSubscriptionId);
-                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(mobileNumberInvolvedInCall);
+                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDataStore.getContact(mobileNumberInvolvedInCall);
                 if(contact == null)
                     callLogEntries.add(new CallLogEntry(null, (long)-1, mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, subscriptionIdForCall));
                 else
@@ -102,7 +102,7 @@ public class CallLogLoader {
                 dateOfCall = c.getString(columnIndexForDate);
                 callType = c.getString(columnIndexForCallType);// for call type, Incoming or out going
 
-                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getContact(mobileNumberInvolvedInCall);
+                opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDataStore.getContact(mobileNumberInvolvedInCall);
                 if(contact == null)
                     callLogEntries.add(new CallLogEntry(null, (long)-1, mobileNumberInvolvedInCall, durationOfCall, callType, dateOfCall, "0"));
                 else
