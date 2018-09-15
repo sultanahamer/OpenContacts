@@ -60,7 +60,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AndroidUtils.setBackButtonInToolBar(toolbar, this);
         Intent intent = getIntent();
         contactId = intent.getLongExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
         if(contactId == -1)

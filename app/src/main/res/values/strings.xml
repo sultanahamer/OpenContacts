@@ -16,4 +16,5 @@
     <string name="export">Export</string>
     <string name="add_contact">Add contact</string>
     <string name="delete">Delete</string>
+    <string name="edit_contact">Edit contact</string>
 </resources>

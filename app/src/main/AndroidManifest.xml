@@ -41,12 +41,9 @@
 
         <activity android:name=".activities.EditContactActivity" />
         <activity
-            android:parentActivityName=".activities.MainActivity"
             android:name=".activities.ContactDetailsActivity"
-            android:label="@string/title_activity_contact_details" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-        </activity>
+            android:label="@string/title_activity_contact_details" />
+
         <activity
             android:name=".activities.ImportVcardActivity"
             android:label="@string/import_activity">

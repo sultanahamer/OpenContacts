@@ -88,7 +88,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_black_24dp"
+        android:src="@drawable/ic_add_24dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/image_button_add_contact"

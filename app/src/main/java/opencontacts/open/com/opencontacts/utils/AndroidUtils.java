@@ -13,6 +13,8 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -144,5 +146,14 @@ public class AndroidUtils {
             clipboard.setPrimaryClip(clip);
         }
 
+    }
+
+    public static void setBackButtonInToolBar(Toolbar toolBar, final AppCompatActivity appCompatActivity){
+        toolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appCompatActivity.onBackPressed();
+            }
+        });
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 import static android.view.ViewGroup.LayoutParams.*;
 
@@ -35,7 +36,7 @@ public class EditContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         editText_firstName = (EditText) findViewById(R.id.editFirstName);
         editText_lastName = (EditText) findViewById(R.id.editLastName);
         editText_mobileNumber = (EditText) findViewById(R.id.editPhoneNumber);
@@ -44,7 +45,7 @@ public class EditContactActivity extends AppCompatActivity {
         if(intent.getBooleanExtra(INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, false)) {
             addingNewContact = true;
             editText_mobileNumber.setText(intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER));
-            myToolbar.setTitle("New Contact");
+            toolbar.setTitle("New Contact");
         }
         else{
             contact = (Contact) intent.getSerializableExtra(INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
@@ -53,10 +54,11 @@ public class EditContactActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED);
                 finish();
             }
-            myToolbar.setTitle(contact.getFirstName());
+            toolbar.setTitle(contact.getFirstName());
             fillFieldsFromContactDetails();
         }
-        setSupportActionBar(myToolbar);
+        setSupportActionBar(toolbar);
+        AndroidUtils.setBackButtonInToolBar(toolbar, this);
     }
 
     private void fillFieldsFromContactDetails() {

@@ -7,14 +7,18 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-
+        app:navigationIcon="@drawable/ic_arrow_back"
+        />
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?colorPrimaryDark"
+        />
     <ScrollView android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/divider">
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"

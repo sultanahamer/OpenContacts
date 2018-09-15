@@ -37,5 +37,5 @@
         android:layout_alignEnd="@+id/editText_dialpad_number"
         android:layout_alignRight="@+id/editText_dialpad_number"
         android:layout_alignTop="@+id/button_message"
-        android:src="@drawable/ic_add_black_24dp" />
+        android:src="@drawable/ic_add_24dp" />
 </RelativeLayout>

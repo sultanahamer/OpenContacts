@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_dialpad_black_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.dial_pad);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
