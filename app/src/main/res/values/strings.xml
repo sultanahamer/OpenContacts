@@ -13,4 +13,7 @@
     <string name="exporting_contacts_complete">Finished exporting contacts</string>
     <string name="exporting_contacts_started">Started exporting contacts</string>
     <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="export">Export</string>
+    <string name="add_contact">Add contact</string>
+    <string name="delete">Delete</string>
 </resources>

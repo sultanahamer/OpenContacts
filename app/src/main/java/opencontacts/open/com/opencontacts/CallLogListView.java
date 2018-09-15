@@ -62,7 +62,7 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
             public void onClick(View v) {
                 CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
                 Intent intentToAddContact = AndroidUtils.getIntentToAddContact(callLogEntry.getPhoneNumber(), context);
-                ((Activity)context).startActivityForResult(intentToAddContact, MainActivity.REQUESTCODE_FOR_ADD_CONTACT);
+                context.startActivity(intentToAddContact);
             }
         };
         final OnClickListener showContactDetails = new OnClickListener() {
@@ -75,8 +75,8 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
                 Contact contact = ContactsDataStore.getContactWithId(contactId);
                 if(contact == null)
                     return;
-                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(ContactsDataStore.getContactWithId(contactId), CallLogListView.this.context);
-                ((Activity)(CallLogListView.this.context)).startActivityForResult(showContactDetails, MainActivity.REQUESTCODE_FOR_SHOW_CONTACT_DETAILS);
+                Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(contactId, CallLogListView.this.context);
+                ((Activity)(CallLogListView.this.context)).startActivity(showContactDetails);
             }
         };
 

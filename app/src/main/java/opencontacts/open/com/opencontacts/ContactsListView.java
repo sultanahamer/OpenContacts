@@ -87,6 +87,6 @@ public class ContactsListView extends ListView implements DataStoreChangeListene
 
     @Override
     public void onShowDetails(Contact contact) {
-        activity.startActivity(AndroidUtils.getIntentToShowContactDetails(contact, activity));
+        activity.startActivity(AndroidUtils.getIntentToShowContactDetails(contact.getId(), activity));
     }
 }

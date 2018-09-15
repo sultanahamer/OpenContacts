@@ -1,15 +1,15 @@
 package opencontacts.open.com.opencontacts.activities;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.R;
@@ -27,9 +26,9 @@ import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 
 public class ContactDetailsActivity extends AppCompatActivity {
+    private long contactId;
     private Contact contact;
     private Toolbar toolbar;
-    private int REQUESTCODE_FOR_EDIT_CONTACT = 1;
 
     private View.OnClickListener callContact = new View.OnClickListener() {
         @Override
@@ -52,29 +51,91 @@ public class ContactDetailsActivity extends AppCompatActivity {
             return true;
         }
     };
-
     private String getSelectedMobileNumber(View v){
-        int position = (Integer)v.getTag();
-        return contact.getPhoneNumbers().get(position);
+        return v.getTag().toString();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        Intent intent = getIntent();
-        contact = (Contact) intent.getSerializableExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS);
-        toolbar.setTitle(contact.getName());
         setSupportActionBar(toolbar);
-        if(contact.getId() == -1){
-            Toast.makeText(this, R.string.error_while_loading_contact, Toast.LENGTH_LONG).show();
-            setResult(RESULT_CANCELED);
-            finish();
-        }
-
-        findViewById(R.id.image_button_delete_contact).setOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        Intent intent = getIntent();
+        contactId = intent.getLongExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, -1);
+        if(contactId == -1)
+            showInvalidContactErrorAndExit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contact = ContactsDataStore.getContactWithId(contactId);
+        if(contact == null)
+            showInvalidContactErrorAndExit();
+        setUpUI();
+    }
+
+    private void showInvalidContactErrorAndExit() {
+        Toast.makeText(this, R.string.error_while_loading_contact, Toast.LENGTH_LONG).show();
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    private void setUpUI() {
+        toolbar.setTitle(contact.getName());
+        ListView listView = (ListView) findViewById(R.id.listview_phone_numbers);
+        final List<String> mobileNumbers = contact.getPhoneNumbers();
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.contact_details_row, mobileNumbers){
+            private LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if(convertView == null)
+                    convertView = layoutInflater.inflate(R.layout.contact_details_row, parent, false);
+                String mobileNumber = mobileNumbers.get(position);
+                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(mobileNumber);
+                convertView.findViewById(R.id.button_call).setOnClickListener(callContact);
+                convertView.findViewById(R.id.button_message).setOnClickListener(messageContact);
+                convertView.setOnLongClickListener(copyPhoneNumberToClipboard);
+                convertView.setTag(mobileNumber);
+                return convertView;
+            }
+        });
+    }
+
+    private void exportToContactsApp() {
+        Intent exportToContactsAppIntent = AndroidUtils.getIntentToExportContactToNativeContactsApp(contact);
+        startActivity(exportToContactsAppIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.contact_details_menu, menu);
+        menu.findItem(R.id.image_button_export_to_contacts_app).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                exportToContactsApp();
+                return true;
+            }
+        });
+        menu.findItem(R.id.image_button_edit_contact).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent editContact = new Intent(ContactDetailsActivity.this, EditContactActivity.class);
+                editContact.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, contact);
+                ContactDetailsActivity.this.startActivity(editContact);
+                return true;
+            }
+        });
+        menu.findItem(R.id.image_button_delete_contact).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
                 new AlertDialog.Builder(ContactDetailsActivity.this)
                         .setMessage("Do you want to delete?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -86,64 +147,9 @@ public class ContactDetailsActivity extends AppCompatActivity {
                             }
                         })
                         .setNegativeButton("No", null).show();
+                return true;
             }
         });
-
-        findViewById(R.id.image_button_edit_contact).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editContact = new Intent(ContactDetailsActivity.this, EditContactActivity.class);
-                editContact.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, contact);
-                ContactDetailsActivity.this.startActivityForResult(editContact, REQUESTCODE_FOR_EDIT_CONTACT);
-            }
-        });
-
-        findViewById(R.id.image_button_export_to_contacts_app).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportToContactsApp();
-            }
-        });
-
-        ListView listView = (ListView) findViewById(R.id.listview_contact_details);
-        final List<String> mobileNumbers = contact.getPhoneNumbers();
-        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.contact_details_row, mobileNumbers){
-            private LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if(convertView == null)
-                    convertView = layoutInflater.inflate(R.layout.contact_details_row, parent, false);
-                ((TextView) convertView.findViewById(R.id.textview_phone_number)).setText(mobileNumbers.get(position));
-                convertView.findViewById(R.id.button_call).setOnClickListener(callContact);
-                convertView.findViewById(R.id.button_message).setOnClickListener(messageContact);
-                convertView.setOnLongClickListener(copyPhoneNumberToClipboard);
-                convertView.setTag(position);
-                return convertView;
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if(requestCode == REQUESTCODE_FOR_EDIT_CONTACT && resultCode == RESULT_OK){
-            finish();
-        }
-    }
-
-    private void exportToContactsApp() {
-        Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
-
-        ArrayList<ContentValues> data = new ArrayList<ContentValues>();
-        for(String phoneNumber : contact.getPhoneNumbers()){
-            ContentValues row = new ContentValues();
-            row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-            row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber);
-            data.add(row);
-        }
-        exportToContactsAppIntent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data)
-                .putExtra(ContactsContract.Intents.Insert.NAME, contact.getName());
-        startActivity(exportToContactsAppIntent);
+        return super.onCreateOptionsMenu(menu);
     }
 }

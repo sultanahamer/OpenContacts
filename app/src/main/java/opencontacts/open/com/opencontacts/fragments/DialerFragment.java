@@ -57,7 +57,7 @@ public class DialerFragment extends Fragment implements SelectableTab {
             @Override
             public void onClick(View v) {
                 Intent intentToAddContact = AndroidUtils.getIntentToAddContact(dialPadEditText.getText().toString(), context);
-                startActivityForResult(intentToAddContact, REQUESTCODE_FOR_ADD_CONTACT);
+                startActivity(intentToAddContact);
             }
         });
     }

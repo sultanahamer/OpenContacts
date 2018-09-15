@@ -1,6 +1,7 @@
 package opencontacts.open.com.opencontacts.utils;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,12 +9,15 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+
+import java.util.ArrayList;
 
 import opencontacts.open.com.opencontacts.activities.ContactDetailsActivity;
 import opencontacts.open.com.opencontacts.activities.EditContactActivity;
@@ -80,10 +84,9 @@ public class AndroidUtils {
         return new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + number)).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
-    public static Intent getIntentToShowContactDetails(Contact selectedContact, Context context){
+    public static Intent getIntentToShowContactDetails(long contactId, Context context){
      return new Intent(context, ContactDetailsActivity.class)
-                    .putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, selectedContact)
-                    .putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId());
+                    .putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, contactId);
     }
     public static SharedPreferences getAppsSharedPreferences(Context context){
         return context.getSharedPreferences(context.getString(R.string.app_name), context.MODE_PRIVATE);
@@ -94,6 +97,23 @@ public class AndroidUtils {
             .putExtra(EditContactActivity.INTENT_EXTRA_BOOLEAN_ADD_NEW_CONTACT, true)
             .putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, phoneNumber);
     }
+
+    @NonNull
+    public static Intent getIntentToExportContactToNativeContactsApp(Contact contact) {
+        Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
+
+        ArrayList<ContentValues> data = new ArrayList<>();
+        for(String phoneNumber : contact.getPhoneNumbers()){
+            ContentValues row = new ContentValues();
+            row.put(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+            row.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber);
+            data.add(row);
+        }
+        exportToContactsAppIntent.putParcelableArrayListExtra(ContactsContract.Intents.Insert.DATA, data)
+                .putExtra(ContactsContract.Intents.Insert.NAME, contact.getName());
+        return exportToContactsAppIntent;
+    }
+
 
     public static void showAlert(Context context, String title, String message){
         AlertDialog.Builder builder;
