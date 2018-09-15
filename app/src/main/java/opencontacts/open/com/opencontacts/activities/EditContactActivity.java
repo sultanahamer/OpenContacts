@@ -46,6 +46,7 @@ public class EditContactActivity extends AppCompatActivity {
             addingNewContact = true;
             editText_mobileNumber.setText(intent.getStringExtra(INTENT_EXTRA_STRING_PHONE_NUMBER));
             toolbar.setTitle("New Contact");
+            toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.more_overflow_menu));
         }
         else{
             contact = (Contact) intent.getSerializableExtra(INTENT_EXTRA_CONTACT_CONTACT_DETAILS);

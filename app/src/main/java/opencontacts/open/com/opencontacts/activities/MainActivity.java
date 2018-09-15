@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.more_overflow_menu));
         setSupportActionBar(toolbar);
         setupTabs();
     }

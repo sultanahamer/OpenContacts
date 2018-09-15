@@ -59,6 +59,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.more_overflow_menu));
         setSupportActionBar(toolbar);
         AndroidUtils.setBackButtonInToolBar(toolbar, this);
         Intent intent = getIntent();
