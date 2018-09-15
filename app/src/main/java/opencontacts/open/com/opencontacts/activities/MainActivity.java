@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private CallLogListView callLogListView;
     private CallLogLoader callLogLoader;
     private ViewPager viewPager;
+    private SearchView searchView;
 
     @Override
     protected void onResume() {
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.action_export).setOnMenuItemClickListener(new ExportMenuItemClickHandler(this));
         return super.onCreateOptionsMenu(menu);
     }
-    private void refresh(){
+    private void refresh() {
         new AsyncTask<Void, Void, List<CallLogEntry>>() {
             @Override
             protected List<CallLogEntry> doInBackground(Void... params) {
@@ -127,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
                 DomainUtils.updateContactsAccessedDate(callLogEntries);
             }
         }.execute();
-
     }
 
     private void setupTabs() {
@@ -205,5 +205,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }.execute();
+    }
+
+    public void collapseSearchView(){
+        searchView.onActionViewCollapsed();
     }
 }

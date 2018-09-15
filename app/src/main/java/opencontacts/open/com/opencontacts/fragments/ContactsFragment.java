@@ -10,11 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import opencontacts.open.com.opencontacts.ContactsListView;
+import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 
 public class ContactsFragment extends Fragment implements SelectableTab {
     private LinearLayout linearLayout;
     private ContactsListView contactsListView;
+    private MainActivity mainActivity;
 
     @Nullable
     @Override
@@ -23,6 +25,7 @@ public class ContactsFragment extends Fragment implements SelectableTab {
         ProgressBar progressBar = new ProgressBar(getContext());
         progressBar.setIndeterminate(true);
         linearLayout.addView(progressBar);
+        mainActivity = (MainActivity) getActivity();
         return linearLayout;
     }
 
@@ -36,6 +39,7 @@ public class ContactsFragment extends Fragment implements SelectableTab {
 
     @Override
     public void onUnSelect() {
-
+        contactsListView.clearTextFilter();
+        mainActivity.collapseSearchView();
     }
 }
