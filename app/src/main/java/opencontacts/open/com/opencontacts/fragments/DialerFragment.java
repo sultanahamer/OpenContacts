@@ -22,7 +22,6 @@ public class DialerFragment extends Fragment implements SelectableTab {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        System.out.println("creating damn yolo");
         View inflatedView = inflater.inflate(R.layout.dialer, container, false);
         return inflatedView;
     }

@@ -43,28 +43,43 @@ public class ContactsListView extends ListView implements DataStoreChangeListene
     }
 
     @Override
-    public void onUpdate(Contact contact) {
-        contacts.remove(contact);
-        adapter.remove(contact);
+    public void onUpdate(final Contact contact) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                contacts.remove(contact);
+                contacts.add(contact);
 
-        adapter.add(contact);
-        contacts.add(contact);
+                adapter.remove(contact);
+                adapter.add(contact);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
-        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onRemove(Contact contact) {
-        adapter.remove(contact);
-        contacts.remove(contact);
-        adapter.notifyDataSetChanged();
+    public void onRemove(final Contact contact) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                contacts.remove(contact);
+                adapter.remove(contact);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
-    public void onAdd(Contact contact) {
-        adapter.add(contact);
-        contacts.add(contact);
-        adapter.notifyDataSetChanged();
+    public void onAdd(final Contact contact) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                contacts.add(contact);
+                adapter.add(contact);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

@@ -71,7 +71,7 @@ public class ContactsDataStore {
         return contacts.get(indexOfContact);
     }
 
-    public static void updateLastAccessed(long contactId, String callTimeStamp) {
+    private static void updateLastAccessed(long contactId, String callTimeStamp) {
         opencontacts.open.com.opencontacts.orm.Contact contact = ContactsDBHelper.getDBContactWithId(contactId);
         if (callTimeStamp.equals(contact.lastAccessed))
             return;

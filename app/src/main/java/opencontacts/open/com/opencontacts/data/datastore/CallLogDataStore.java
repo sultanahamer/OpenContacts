@@ -13,7 +13,7 @@ public class CallLogDataStore {
     private static List<CallLogEntry> callLogEntries = new ArrayList<>(1);
     private static List<DataStoreChangeListener<CallLogEntry>> dataChangeListeners = new ArrayList<>(3);
 
-    public static List<CallLogEntry> loadRecentCallLogEntries(Context context) {
+    public static synchronized List<CallLogEntry> loadRecentCallLogEntries(Context context) {
         final List<CallLogEntry> recentCallLogEntries = callLogDBHelper.loadRecentCallLogEntriesIntoDB(context);
         if(recentCallLogEntries.size() == 0)
             return recentCallLogEntries;
@@ -33,7 +33,7 @@ public class CallLogDataStore {
                     CallLogEntry callLogEntry = recentCallLogEntries.get(0);
                     callLogEntries.add(0, callLogEntry);
                     for(DataStoreChangeListener<CallLogEntry> dataStoreChangeListener: dataChangeListeners){
-                        dataStoreChangeListener.onUpdate(callLogEntry);
+                        dataStoreChangeListener.onAdd(callLogEntry);
                     }
                 }
             }
@@ -53,7 +53,7 @@ public class CallLogDataStore {
         if(callLogEntries.size() > 0)
             return callLogEntries;
         callLogEntries = CallLogDBHelper.getRecent100CallLogEntriesFromDB();
-        return callLogEntries;
+        return new ArrayList<>(callLogEntries);
     }
 
     public static void addDataChangeListener(DataStoreChangeListener<CallLogEntry> changeListener) {

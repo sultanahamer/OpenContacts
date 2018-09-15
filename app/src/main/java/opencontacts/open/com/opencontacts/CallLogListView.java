@@ -1,6 +1,5 @@
 package opencontacts.open.com.opencontacts;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.CallLog;
@@ -19,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.data.datastore.CallLogDataStore;
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
@@ -33,15 +31,13 @@ import opencontacts.open.com.opencontacts.utils.Common;
  */
 
 public class CallLogListView extends ListView implements DataStoreChangeListener<CallLogEntry> {
-    List <CallLogEntry> callLogEntries;
     Context context;
     ArrayAdapter<CallLogEntry> adapter;
     public CallLogListView(final Context context) {
         super(context);
         this.context = context;
 
-        callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
-        CallLogDataStore.addDataChangeListener(this);
+        List<CallLogEntry> callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
 
         final OnClickListener callContact = new OnClickListener() {
             @Override
@@ -76,7 +72,7 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
                 if(contact == null)
                     return;
                 Intent showContactDetails = AndroidUtils.getIntentToShowContactDetails(contactId, CallLogListView.this.context);
-                ((Activity)(CallLogListView.this.context)).startActivity(showContactDetails);
+                context.startActivity(showContactDetails);
             }
         };
 
@@ -131,6 +127,7 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
             }
         };
         this.setAdapter(adapter);
+        CallLogDataStore.addDataChangeListener(this);
     }
 
     @Override
@@ -142,18 +139,28 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
     }
 
     @Override
-    public void onAdd(CallLogEntry callLogEntry) {
-        callLogEntries.add(0, callLogEntry);
-        adapter.insert(callLogEntry, 0);
-        adapter.notifyDataSetChanged();
+    public void onAdd(final CallLogEntry callLogEntry) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.insert(callLogEntry, 0);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
     }
 
     @Override
     public void onStoreRefreshed() {
-        callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
-        adapter.clear();
-        adapter.addAll(callLogEntries);
-        adapter.notifyDataSetChanged();
+        final List<CallLogEntry> callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.clear();
+                adapter.addAll(callLogEntries);
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void onDestroy(){
