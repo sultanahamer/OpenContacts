@@ -1,7 +1,6 @@
 package opencontacts.open.com.opencontacts.utils;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Environment;
 
 import java.io.File;
@@ -18,28 +17,12 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.StructuredName;
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
-import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 
 /**
  * Created by sultanm on 7/22/17.
  */
 
 public class DomainUtils {
-
-    public static void updateContactsAccessedDate(final List<CallLogEntry> newCallLogEntries){
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                for(CallLogEntry callLogEntry : newCallLogEntries){
-                    long contactId = callLogEntry.getContactId();
-                    if(contactId !=-1){
-                        ContactsDataStore.updateLastAccessed(contactId, callLogEntry.getDate());
-                    }
-                }
-                return null;
-            }
-        }.execute();
-    }
 
     public static void exportAllContacts(Context context) throws IOException {
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){

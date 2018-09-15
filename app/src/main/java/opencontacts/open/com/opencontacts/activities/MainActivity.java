@@ -21,15 +21,13 @@ import java.util.List;
 
 import opencontacts.open.com.opencontacts.CallLogListView;
 import opencontacts.open.com.opencontacts.ContactsListView;
-import opencontacts.open.com.opencontacts.CallLogLoader;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.actions.ExportMenuItemClickHandler;
+import opencontacts.open.com.opencontacts.data.datastore.CallLogDataStore;
 import opencontacts.open.com.opencontacts.fragments.CallLogFragment;
 import opencontacts.open.com.opencontacts.fragments.ContactsFragment;
 import opencontacts.open.com.opencontacts.fragments.DialerFragment;
 import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
-import opencontacts.open.com.opencontacts.orm.CallLogEntry;
-import opencontacts.open.com.opencontacts.utils.DomainUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ContactsListView contactsListView;
     private CallLogListView callLogListView;
-    private CallLogLoader callLogLoader;
     private ViewPager viewPager;
     private SearchView searchView;
 
@@ -57,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tabbed);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        callLogLoader = new CallLogLoader();
         setupTabs();
     }
 
@@ -65,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         contactsListView.onDestroy();
+        callLogListView.onDestroy();
     }
 
     @Override
@@ -113,21 +110,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
     private void refresh() {
-        new AsyncTask<Void, Void, List<CallLogEntry>>() {
+        new Thread(){
             @Override
-            protected List<CallLogEntry> doInBackground(Void... params) {
-                return callLogLoader.loadCallLog(MainActivity.this);
+            public void run() {
+                CallLogDataStore.loadRecentCallLogEntries(MainActivity.this);
             }
-
-            @Override
-            protected void onPostExecute(List<CallLogEntry> callLogEntries) {
-                super.onPostExecute(callLogEntries);
-                if(callLogEntries == null || callLogEntries.size() == 0)
-                    return;
-                callLogListView.addNewEntries(callLogEntries);
-                DomainUtils.updateContactsAccessedDate(callLogEntries);
-            }
-        }.execute();
+        }.start();
     }
 
     private void setupTabs() {
@@ -184,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected Void doInBackground(Void... params) {
-                callLogLoader.loadCallLog(MainActivity.this);
+                CallLogDataStore.loadRecentCallLogEntries(MainActivity.this);
                 callLogListView = new CallLogListView(MainActivity.this);
                 publishProgress(callLogLoaded);
                 if(contactsListView == null)

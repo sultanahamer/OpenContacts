@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.Random;
 
-import opencontacts.open.com.opencontacts.CallLogLoader;
+import opencontacts.open.com.opencontacts.data.datastore.CallLogDataStore;
 import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.activities.MainActivity;
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
@@ -60,7 +60,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
                     try{
                         if(isCallRecieved)
                             return;
-                        CallLogEntry callLogEntry = new CallLogLoader().loadCallLog(context).get(0);
+                        CallLogEntry callLogEntry = CallLogDataStore.loadRecentCallLogEntries(context).get(0);
                         if(!callLogEntry.getCallType().equals(String.valueOf(CallLog.Calls.MISSED_TYPE)))
                             return;
                     }

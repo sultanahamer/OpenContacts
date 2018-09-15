@@ -1,4 +1,4 @@
-package opencontacts.open.com.opencontacts;
+package opencontacts.open.com.opencontacts.data.datastore;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
+import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
@@ -25,12 +25,12 @@ import static android.content.Context.TELEPHONY_SUBSCRIPTION_SERVICE;
  * Created by sultanm on 8/5/17.
  */
 
-public class CallLogLoader {
+class CallLogDBHelper {
     private SparseIntArray simsInfo = null;
 
     private void createSimsInfo(Context context) {
         simsInfo = new SparseIntArray();
-        List<SubscriptionInfo> listOfSubscriptions = null;
+        List<SubscriptionInfo> listOfSubscriptions;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
             listOfSubscriptions = ((SubscriptionManager) context.getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE)).getActiveSubscriptionInfoList();
             for(int i=0; i<listOfSubscriptions.size(); i++){
@@ -40,15 +40,13 @@ public class CallLogLoader {
     }
     private String preferenceLastCallLogSavedDate = "preference_last_call_log_saved_date";
 
-    public List<CallLogEntry> loadCallLog(Context context) {
-        if(simsInfo == null)
-            createSimsInfo(context);
-        List<CallLogEntry> callLogEntries = getCallLogEntries(context);
+    public List<CallLogEntry> loadRecentCallLogEntriesIntoDB(Context context) {
+        List<CallLogEntry> callLogEntries = getRecentCallLogEntries(context);
         CallLogEntry.saveInTx(callLogEntries);
         return callLogEntries;
     }
 
-    private List<CallLogEntry> getCallLogEntries(Context context){
+    private List<CallLogEntry> getRecentCallLogEntries(Context context){
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -63,7 +61,7 @@ public class CallLogLoader {
         Cursor c;
         String mobileNumberInvolvedInCall, dateOfCall, durationOfCall, callType, subscriptionIdForCall;
         ArrayList<CallLogEntry> callLogEntries = new ArrayList<>();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1){
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1){//TODO: refactor below two if else blocks 90% same
             c = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, new String[]{CallLog.Calls.NUMBER, CallLog.Calls.DURATION, CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.PHONE_ACCOUNT_ID}, CallLog.Calls.DATE + " > ?", new String[]{getLastSavedCallLogDate(context)}, CallLog.Calls.DATE + " DESC");
             if(c.getCount() == 0)
                 return callLogEntries;
@@ -121,5 +119,9 @@ public class CallLogLoader {
 
     private void setLastSavedCallLogDate(String date, Context context) {
         AndroidUtils.getAppsSharedPreferences(context).edit().putString(preferenceLastCallLogSavedDate, date).apply();
+    }
+
+    public static List<CallLogEntry> getRecent100CallLogEntriesFromDB(){
+        return CallLogEntry.find(CallLogEntry.class, null, null, null, "date desc", "100");
     }
 }

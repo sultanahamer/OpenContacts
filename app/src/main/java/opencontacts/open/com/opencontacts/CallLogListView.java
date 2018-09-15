@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Locale;
 
 import opencontacts.open.com.opencontacts.activities.MainActivity;
+import opencontacts.open.com.opencontacts.data.datastore.CallLogDataStore;
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.interfaces.DataStoreChangeListener;
 import opencontacts.open.com.opencontacts.orm.CallLogEntry;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 import opencontacts.open.com.opencontacts.utils.Common;
@@ -30,7 +32,7 @@ import opencontacts.open.com.opencontacts.utils.Common;
  * Created by sultanm on 7/31/17.
  */
 
-public class CallLogListView extends ListView {
+public class CallLogListView extends ListView implements DataStoreChangeListener<CallLogEntry> {
     List <CallLogEntry> callLogEntries;
     Context context;
     ArrayAdapter<CallLogEntry> adapter;
@@ -38,7 +40,8 @@ public class CallLogListView extends ListView {
         super(context);
         this.context = context;
 
-        callLogEntries = CallLogEntry.find(CallLogEntry.class, null, null, null, "date desc", "100");
+        callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
+        CallLogDataStore.addDataChangeListener(this);
 
         final OnClickListener callContact = new OnClickListener() {
             @Override
@@ -130,10 +133,30 @@ public class CallLogListView extends ListView {
         this.setAdapter(adapter);
     }
 
-    public void addNewEntries(List<CallLogEntry> newCallLogEntries) {
-        for(int i=0,totalEntries = newCallLogEntries.size(); i < totalEntries; i++){
-            adapter.insert(newCallLogEntries.get(i), i);
-        }
+    @Override
+    public void onUpdate(CallLogEntry callLogEntry) {
+    }
+
+    @Override
+    public void onRemove(CallLogEntry callLogEntry) {
+    }
+
+    @Override
+    public void onAdd(CallLogEntry callLogEntry) {
+        callLogEntries.add(0, callLogEntry);
+        adapter.insert(callLogEntry, 0);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStoreRefreshed() {
+        callLogEntries = CallLogDataStore.getRecent100CallLogEntries();
+        adapter.clear();
+        adapter.addAll(callLogEntries);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void onDestroy(){
+        CallLogDataStore.removeDataChangeListener(this);
     }
 }

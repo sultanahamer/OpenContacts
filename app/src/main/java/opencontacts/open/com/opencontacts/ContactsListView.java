@@ -10,13 +10,14 @@ import java.util.List;
 
 import opencontacts.open.com.opencontacts.data.datastore.ContactsDataStore;
 import opencontacts.open.com.opencontacts.domain.Contact;
+import opencontacts.open.com.opencontacts.interfaces.DataStoreChangeListener;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 /**
  * Created by sultanm on 3/25/17.
  */
 
-public class ContactsListView extends ListView implements ContactsDataStore.ContactsDataChangeListener, ContactsListViewAdapter.ContactsListActionsListener {
+public class ContactsListView extends ListView implements DataStoreChangeListener<Contact>, ContactsListViewAdapter.ContactsListActionsListener {
     private final List <Contact> contacts;
     private Context activity;
     private ContactsListViewAdapter adapter;
@@ -64,6 +65,10 @@ public class ContactsListView extends ListView implements ContactsDataStore.Cont
         adapter.add(contact);
         contacts.add(contact);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStoreRefreshed() {
     }
 
     public void onDestroy(){

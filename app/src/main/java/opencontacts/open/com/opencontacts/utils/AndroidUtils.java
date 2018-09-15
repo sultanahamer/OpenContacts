@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import java.io.Serializable;
 
 import opencontacts.open.com.opencontacts.activities.ContactDetailsActivity;
 import opencontacts.open.com.opencontacts.activities.EditContactActivity;
@@ -83,7 +82,7 @@ public class AndroidUtils {
 
     public static Intent getIntentToShowContactDetails(Contact selectedContact, Context context){
      return new Intent(context, ContactDetailsActivity.class)
-                    .putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, (Serializable) selectedContact)
+                    .putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_CONTACT_DETAILS, selectedContact)
                     .putExtra(MainActivity.INTENT_EXTRA_LONG_CONTACT_ID, selectedContact.getId());
     }
     public static SharedPreferences getAppsSharedPreferences(Context context){
