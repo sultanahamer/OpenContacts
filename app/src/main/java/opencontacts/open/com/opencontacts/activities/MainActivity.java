@@ -32,8 +32,6 @@ import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 
 public class MainActivity extends AppCompatActivity {
     public static final int CONTACTS_TAB_INDEX = 1;
-    public static int REQUESTCODE_FOR_ADD_CONTACT = 1;
-    public static int REQUESTCODE_FOR_SHOW_CONTACT_DETAILS = 2;
     public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";
     private Toolbar toolbar;
     private ContactsListView contactsListView;

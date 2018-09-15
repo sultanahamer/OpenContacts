@@ -14,8 +14,6 @@ import opencontacts.open.com.opencontacts.R;
 import opencontacts.open.com.opencontacts.interfaces.SelectableTab;
 import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
-import static opencontacts.open.com.opencontacts.activities.MainActivity.REQUESTCODE_FOR_ADD_CONTACT;
-
 public class DialerFragment extends Fragment implements SelectableTab {
     private Context context;
     private View view;
