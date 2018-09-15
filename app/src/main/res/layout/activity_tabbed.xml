@@ -13,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-        android:title="Open Contacts"
+        android:title="@string/app_name"
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"/>
     <android.support.v4.view.ViewPager
