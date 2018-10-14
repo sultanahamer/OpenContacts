@@ -8,6 +8,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_blue_dark"
         android:layout_marginTop="50dp"
         android:id="@+id/name_of_contact"
         android:text="Unknown"

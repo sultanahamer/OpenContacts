@@ -89,7 +89,7 @@ public class PhoneStateReceiver extends BroadcastReceiver {
         LayoutInflater layoutinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         drawOverIncomingCallLayout = layoutinflater.inflate(R.layout.draw_over_incoming_call, null);
         TextView contactName = (TextView) drawOverIncomingCallLayout.findViewById(R.id.name_of_contact);
-        contactName.setText(callingContact.toString());
+        contactName.setText(callingContact.toString() + " calling...");
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
