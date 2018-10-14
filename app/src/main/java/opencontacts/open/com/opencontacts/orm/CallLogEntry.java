@@ -37,16 +37,14 @@ public class CallLogEntry extends SugarRecord {
         super();
     }
 
-    public CallLogEntry(String name, long contactId, String phoneNumber, String duration, String callType, String date, String simId) {
+    public CallLogEntry(String name, long contactId, String phoneNumber, String duration, String callType, String date, int simId) {
         this.name = name;
         this.contactId = contactId;
         this.phoneNumber = phoneNumber;
         this.duration = duration;
         this.callType = callType;
         this.date = date;
-        if(simId == null)
-            return;
-        this.simId = Integer.parseInt(simId);
+        this.simId = simId;
     }
 
     public String getName() {
