@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int CONTACTS_TAB_INDEX = 1;
     public static final String INTENT_EXTRA_LONG_CONTACT_ID = "contact_id";
     private Toolbar toolbar;
-    private ContactsListView contactsListView;
+    private ContactsListView contactsListView;//TODO: get rid of both these listviews here.
     private CallLogListView callLogListView;
     private ViewPager viewPager;
     private SearchView searchView;
@@ -166,28 +166,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         new AsyncTask<Void, String, Void>() {
-            String callLogLoaded = "call log loaded";
-            String contactsLoaded = "contacts loaded";
+            String CALL_LOG_LOADED = "call log loaded";
+            String CONTACTS_LOADED = "contacts loaded";
 
             @Override
             protected Void doInBackground(Void... params) {
                 CallLogDataStore.loadRecentCallLogEntries(MainActivity.this);
                 callLogListView = new CallLogListView(MainActivity.this);
-                publishProgress(callLogLoaded);
+                publishProgress(CALL_LOG_LOADED);
                 if(contactsListView == null)
                     contactsListView = new ContactsListView(MainActivity.this);
-                publishProgress(contactsLoaded);
+                publishProgress(CONTACTS_LOADED);
                 return null;
             }
 
             @Override
             protected void onProgressUpdate(String... progress) {
                 super.onProgressUpdate(progress);
-                if(callLogLoaded.equals(progress[0])){
+                if(CALL_LOG_LOADED.equals(progress[0])){
                     ((CallLogFragment)tabs.get(0)).addCallLog(callLogListView);
                 }
 
-                if(contactsLoaded.equals(progress[0])) {
+                if(CONTACTS_LOADED.equals(progress[0])) {
                     ((ContactsFragment)tabs.get(1)).addContactsList(contactsListView);
                 }
             }

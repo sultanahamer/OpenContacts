@@ -28,11 +28,15 @@ public class CallLogFragment extends Fragment implements SelectableTab {
         ProgressBar progressBar = new ProgressBar(getContext());
         progressBar.setIndeterminate(true);
         linearLayout.addView(progressBar);
+        if(callLogListView != null)
+            addCallLog(callLogListView);
         return linearLayout;
     }
 
-    public void addCallLog(CallLogListView callLogListView){
+    public void addCallLog(CallLogListView callLogListView){//TODO: too bad accepting a view into a fragment. Get list instead and handle it internally.
         this.callLogListView = callLogListView;
+        if(linearLayout == null)
+            return;
         linearLayout.removeAllViews();
         final Context context = getContext();
         final SwipeRefreshLayout swipeRefreshLayout = new SwipeRefreshLayout(context);

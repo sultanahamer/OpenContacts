@@ -26,11 +26,15 @@ public class ContactsFragment extends Fragment implements SelectableTab {
         progressBar.setIndeterminate(true);
         linearLayout.addView(progressBar);
         mainActivity = (MainActivity) getActivity();
+        if(contactsListView != null)
+            addContactsList(contactsListView);
         return linearLayout;
     }
 
     public void addContactsList(ContactsListView contactsListView){
         this.contactsListView = contactsListView;
+        if(linearLayout == null)
+            return;
         linearLayout.removeAllViews();
         linearLayout.addView(contactsListView);
     }

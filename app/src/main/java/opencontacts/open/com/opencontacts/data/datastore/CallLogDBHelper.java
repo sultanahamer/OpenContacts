@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.SubscriptionInfo;
@@ -46,7 +47,7 @@ class CallLogDBHelper {
         return callLogEntries;
     }
 
-    private List<CallLogEntry> getRecentCallLogEntries(Context context){
+    private List<CallLogEntry> getRecentCallLogEntries(final Context context){
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -55,8 +56,14 @@ class CallLogDBHelper {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            Toast.makeText(context, R.string.grant_read_call_logs_permission, Toast.LENGTH_LONG).show();
-            return null;
+            Handler mainHandler = new Handler(context.getMainLooper());
+
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {Toast.makeText(context, R.string.grant_read_call_logs_permission, Toast.LENGTH_LONG).show();} // This is your code
+            };
+            mainHandler.post(myRunnable);
+            return new ArrayList<>(0);
         }
         Cursor c;
         String mobileNumberInvolvedInCall, dateOfCall, durationOfCall, callType, subscriptionIdForCall;
