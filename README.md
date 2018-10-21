@@ -1,3 +1,4 @@
+# Deprecating this. As moved this project to gitlab (https://gitlab.com/sultanahamer/OpenContacts)
 # OpenContacts for Android
 Privacy to your contacts.
 
