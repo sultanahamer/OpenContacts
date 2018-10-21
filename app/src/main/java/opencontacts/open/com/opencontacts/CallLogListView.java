@@ -56,9 +56,8 @@ public class CallLogListView extends ListView implements DataStoreChangeListener
         final OnClickListener addContact = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
-                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(callLogEntry.getPhoneNumber(), context);
-                context.startActivity(intentToAddContact);
+                final CallLogEntry callLogEntry = (CallLogEntry) ((View)v.getParent()).getTag();
+                AndroidUtils.getAlertDialogToAddContact(callLogEntry.getPhoneNumber(), context).show();
             }
         };
         final OnClickListener showContactDetails = new OnClickListener() {

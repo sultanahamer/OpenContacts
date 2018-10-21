@@ -1,6 +1,5 @@
 package opencontacts.open.com.opencontacts;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.ListView;
 
@@ -19,13 +18,13 @@ import opencontacts.open.com.opencontacts.utils.AndroidUtils;
 
 public class ContactsListView extends ListView implements DataStoreChangeListener<Contact>, ContactsListViewAdapter.ContactsListActionsListener {
     private final List <Contact> contacts;
-    private Context activity;
+    private Context context;
     private ContactsListViewAdapter adapter;
 
 
-    public ContactsListView(final Activity activity) {
-        super(activity);
-        this.activity = activity;
+    public ContactsListView(final Context context) {
+        super(context);
+        this.context = context;
         setTextFilterEnabled(true);
         contacts = ContactsDataStore.getAllContacts();
         ContactsDataStore.addDataChangeListener(this);
@@ -35,8 +34,7 @@ public class ContactsListView extends ListView implements DataStoreChangeListene
                 return contact1.getName().compareToIgnoreCase(contact2.getName());
             }
         });
-
-        adapter = new ContactsListViewAdapter(activity, R.layout.contact, contacts);
+        adapter = new ContactsListViewAdapter(context, R.layout.contact, contacts);
         adapter.setContactsListActionsListener(this);
 
         this.setAdapter(adapter);
@@ -92,16 +90,16 @@ public class ContactsListView extends ListView implements DataStoreChangeListene
 
     @Override
     public void onCallClicked(Contact contact) {
-        AndroidUtils.call(contact.getPhoneNumber(), activity);
+        AndroidUtils.call(contact.getPhoneNumber(), context);
     }
 
     @Override
     public void onMessageClicked(Contact contact) {
-        AndroidUtils.message(contact.getPhoneNumber(), activity);
+        AndroidUtils.message(contact.getPhoneNumber(), context);
     }
 
     @Override
     public void onShowDetails(Contact contact) {
-        activity.startActivity(AndroidUtils.getIntentToShowContactDetails(contact.getId(), activity));
+        context.startActivity(AndroidUtils.getIntentToShowContactDetails(contact.getId(), context));
     }
 }

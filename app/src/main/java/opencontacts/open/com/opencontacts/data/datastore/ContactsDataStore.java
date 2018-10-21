@@ -44,8 +44,7 @@ public class ContactsDataStore {
             return;
         ContactsDBHelper.updateContactInDB(contact);
         Contact updatedContact = ContactsDBHelper.getContact(contact.getId());
-        contacts.remove(indexOfContact);
-        contacts.add(indexOfContact, updatedContact);
+        contacts.set(indexOfContact, updatedContact);
         for (DataStoreChangeListener<Contact> contactsDataChangeListener : dataChangeListeners)
             contactsDataChangeListener.onUpdate(updatedContact);
     }

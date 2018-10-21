@@ -3,6 +3,7 @@ package opencontacts.open.com.opencontacts.utils;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 
+import opencontacts.open.com.opencontacts.activities.AddToContactActivity;
 import opencontacts.open.com.opencontacts.activities.ContactDetailsActivity;
 import opencontacts.open.com.opencontacts.activities.EditContactActivity;
 import opencontacts.open.com.opencontacts.activities.MainActivity;
@@ -100,6 +102,12 @@ public class AndroidUtils {
             .putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, phoneNumber);
     }
 
+    public static Intent getIntentToLaunchAddToContactActivity(String phoneNumber, Context context){
+        return new Intent(context, AddToContactActivity.class)
+                .putExtra(EditContactActivity.INTENT_EXTRA_STRING_PHONE_NUMBER, phoneNumber)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+    }
+
     @NonNull
     public static Intent getIntentToExportContactToNativeContactsApp(Contact contact) {
         Intent exportToContactsAppIntent = new Intent(Intent.ACTION_INSERT, ContactsContract.Contacts.CONTENT_URI);
@@ -155,5 +163,23 @@ public class AndroidUtils {
                 appCompatActivity.onBackPressed();
             }
         });
+    }
+
+    public static android.app.AlertDialog getAlertDialogToAddContact(final String phoneNumber, final Context context){
+        return new android.app.AlertDialog.Builder(context)
+                .setItems(new CharSequence[]{context.getString(R.string.create_new_contact), context.getString(R.string.add_to_existing)}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                context.startActivity(AndroidUtils.getIntentToAddContact(phoneNumber, context));
+                                break;
+                            case 1:
+                                context.startActivity(AndroidUtils.getIntentToLaunchAddToContactActivity(phoneNumber, context));
+                                break;
+                        }
+                    }
+                })
+                .create();
     }
 }

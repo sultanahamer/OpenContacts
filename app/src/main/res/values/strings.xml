@@ -17,4 +17,8 @@
     <string name="add_contact">Add contact</string>
     <string name="delete">Delete</string>
     <string name="edit_contact">Edit contact</string>
+    <string name="add_to_contact">Add to Contact</string>
+    <string name="search">Search</string>
+    <string name="create_new_contact">Create new contact</string>
+    <string name="add_to_existing">Add to existing contact</string>
 </resources>

@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 contactsListView.setFilterText(newText);
-                return false;
+                return true;
             }
         });
 

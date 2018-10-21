@@ -1,7 +1,6 @@
 package opencontacts.open.com.opencontacts.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -53,8 +52,7 @@ public class DialerFragment extends Fragment implements SelectableTab {
         view.findViewById(R.id.button_add_contact).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentToAddContact = AndroidUtils.getIntentToAddContact(dialPadEditText.getText().toString(), context);
-                startActivity(intentToAddContact);
+                AndroidUtils.getAlertDialogToAddContact(dialPadEditText.getText().toString(), context).show();
             }
         });
     }

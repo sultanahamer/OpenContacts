@@ -10,8 +10,6 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import opencontacts.open.com.opencontacts.domain.Contact;
@@ -67,61 +65,11 @@ public class ContactsListViewAdapter extends ArrayAdapter<Contact>{
     @NonNull
     @Override
     public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected synchronized FilterResults  performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults();
-                if(constraint == null || constraint.length() == 0){
-                    results.values = contacts;
-                    results.count = contacts.size();
-                    return results;
-                }
-
-                ArrayList<Contact> filteredContacts = new ArrayList<>();
-                for (Contact c : contacts) {
-                    if (c.toString().toUpperCase().contains( constraint.toString().toUpperCase() )) {
-                        filteredContacts.add(c);
-                    }
-                }
-                Collections.sort(filteredContacts, new Comparator<Contact>() {
-                    @Override
-                    public int compare(Contact contact1, Contact contact2) {
-                        String lastAccessedDate1 = contact1.getLastAccessed();
-                        String lastAccessedDate2 = contact2.getLastAccessed();
-                        if(lastAccessedDate1 == null && lastAccessedDate2 == null)
-                            return 0;
-                        else if(lastAccessedDate1 == null)
-                            return 1;
-                        else if (lastAccessedDate2 == null)
-                            return -1;
-                        else
-                            return lastAccessedDate2.compareTo(lastAccessedDate1);
-                    }
-                });
-                results.values = filteredContacts;
-                results.count = filteredContacts.size();
-                return results;
-            }
-
-            @Override
-            protected synchronized void publishResults(CharSequence constraint, FilterResults results) {
-                clear();
-                if (constraint == null || constraint.length() == 0)
-                    addAllContactsToAdapter(contacts);
-                else
-                    addAllContactsToAdapter((List<Contact>) results.values);
-                notifyDataSetChanged();
-            }
-        };
-    }
-
-    private synchronized void addAllContactsToAdapter(List<Contact> contactsList){
-        for(Contact contact : contactsList)
-            add(contact);
+        return new ContactsListFilter(contacts, this);
     }
 
     ContactsListViewAdapter(@NonNull Context context, int resource, @NonNull List<Contact> contacts) {
-        super(context, resource, new ArrayList<Contact>(contacts));
+        super(context, resource, new ArrayList<>(contacts));
         this.contacts = contacts;
         layoutInflater = LayoutInflater.from(context);
     }

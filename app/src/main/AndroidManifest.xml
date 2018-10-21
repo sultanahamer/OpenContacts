@@ -40,6 +40,7 @@
             android:value="opencontacts.open.com.opencontacts.orm" />
 
         <activity android:name=".activities.EditContactActivity" />
+        <activity android:name=".activities.AddToContactActivity" />
         <activity
             android:name=".activities.ContactDetailsActivity"
             android:label="@string/title_activity_contact_details" />
